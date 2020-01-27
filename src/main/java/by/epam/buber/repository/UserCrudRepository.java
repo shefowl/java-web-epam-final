@@ -1,7 +1,7 @@
 package by.epam.buber.repository;
 
-import by.epam.buber.entity.User;
+import by.epam.buber.entity.participant.TaxiParticipant;
 
-public interface UserCrudRepository extends CrudRepository<Integer, User> {
-    User getByName(String name);
+public interface UserCrudRepository extends CrudRepository<Integer, TaxiParticipant> {
+    TaxiParticipant getByName(String name);
 }

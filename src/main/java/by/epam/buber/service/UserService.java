@@ -1,16 +1,18 @@
 package by.epam.buber.service;
 
-import by.epam.buber.entity.User;
+import by.epam.buber.entity.*;
+import by.epam.buber.entity.participant.TaxiParticipant;
+import by.epam.buber.entity.participant.User;
 import by.epam.buber.repository.impl.UserCrudRepositoryImpl;
 
 public class UserService {
     UserCrudRepositoryImpl repository = new UserCrudRepositoryImpl();
 
-    public User login(String name, String password){
-        User user = repository.getByName(name);
-        if(user != null){
-            if(user.getPassword().equals(password)){
-                return user;
+    public TaxiParticipant login(String name, String password){
+        TaxiParticipant taxiParticipant = repository.getByName(name);
+        if(taxiParticipant != null){
+            if(taxiParticipant.getPassword().equals(password)){
+                return taxiParticipant;
             }
         }
         else{
@@ -19,36 +21,43 @@ public class UserService {
         return null;
     }
 
-    public User signUp(String name, String password){
-        User user = repository.getByName(name);
+    public TaxiParticipant signUp(String name, String password, String email, String phoneNumber){
+        User user = (User)repository.getByName(name);
         if(user == null){
-            user = new User(name, password);
+            user = new User(name, password, email, phoneNumber);
             repository.save(user);
         }
         return user;
     }
 
-    public User changeName(int id, String name) {
-        User user = repository.getById(id);
-        if (user != null) {
-            user.setName(name);
-            repository.save(id, user);
-            return user;
+    public TaxiParticipant changeName(int id, String name) {
+        TaxiParticipant taxiParticipant = repository.getById(id);
+        if (taxiParticipant != null) {
+            taxiParticipant.setName(name);
+            repository.save(id, taxiParticipant);
+            return taxiParticipant;
         }
         return null;
     }
 
-    public User changePassword(int id, String current, String newPassword, String repeatNewPassword) {
-        User user = repository.getById(id);
-        if (user != null) {
-            if(user.getPassword().equals(current)){
+    public TaxiParticipant changePassword(int id, String current, String newPassword, String repeatNewPassword) {
+        TaxiParticipant taxiParticipant = repository.getById(id);
+        if (taxiParticipant != null) {
+            if(taxiParticipant.getPassword().equals(current)){
                 if(newPassword.equals(repeatNewPassword)) {
-                    user.setPassword(newPassword);
-                    repository.save(id, user);
-                    return user;
+                    taxiParticipant.setPassword(newPassword);
+                    repository.save(id, taxiParticipant);
+                    return taxiParticipant;
                 }
             }
         }
         return null;
+    }
+
+    public Order makeOrder(String address, String carClass, String comment){
+        Order order = new Order(address, comment,CarClass.valueOf(carClass.toUpperCase()));
+        //List<Driver> ableDrivers = repository.getAbleDrivers(address, carClass);
+        //order.setAbleDrivers(ableDrivers);
+        return order;
     }
 }

@@ -19,7 +19,7 @@
         <td>Name: <c:out value="${sessionScope.userName}"/></td>
     </tr>
     <br>
-    <td><a href="hello?action=update">New order</a></td>
+    <td><a href="app?action=newOrder">New order</a></td>
     <br>
     <td><a href="hello?action=info">Show orders</a></td>
     <br>
@@ -27,7 +27,7 @@
     <br>
     <td><a href="app?action=changePassword">Change password</a></td>
     <br>
-    <td><a href="hello?action=users">Show users</a></td>
+    <td><a href="hello?action=taxiParticipants">Show users</a></td>
     <br>
     <td><a href="hello?action=logout">Log Out</a></td>
 </section>

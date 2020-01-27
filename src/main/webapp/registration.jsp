@@ -12,7 +12,7 @@
 </head>
 <body>
 <section>
-    <%--<jsp:useBean id="user" scope="request" type="by.epam.buber.entity.User"/>--%>
+    <%--<jsp:useBean id="taxiParticipant" scope="request" type="by.epam.buber.entity.TaxiParticipantParticipant"/>--%>
     <form method="post" action="hello?action=signUp">
         <dl>
             <dt>Login: </dt>
@@ -21,6 +21,14 @@
         <dl>
             <dt>Password: </dt>
             <dd><input type="password" name="password"/></dd>
+        </dl>
+        <dl>
+            <dt>Email: </dt>
+            <dd><input type="email" name="email"/></dd>
+        </dl>
+        <dl>
+            <dt>Phone number: </dt>
+            <dd><input type="text" name="phone"/></dd>
         </dl>
         <button type="submit">Sign Up</button>
     </form>

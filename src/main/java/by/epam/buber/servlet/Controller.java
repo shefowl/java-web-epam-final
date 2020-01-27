@@ -1,5 +1,6 @@
 package by.epam.buber.servlet;
 
+import by.epam.buber.entity.Order;
 import by.epam.buber.service.UserService;
 
 import javax.servlet.ServletConfig;
@@ -28,9 +29,6 @@ public class Controller extends HttpServlet {
         HttpSession session = request.getSession(true);
         String action = request.getParameter("action");
         switch (action == null ? "info" : action) {
-            case "save":
-                request.getRequestDispatcher("/newOrder.jsp").forward(request, response);
-                break;
             case "users":
                 request.getRequestDispatcher("/userList.jsp").forward(request, response);
                 break;
@@ -43,7 +41,13 @@ public class Controller extends HttpServlet {
             case "changePassword":
                 request.getRequestDispatcher("/password.jsp").forward(request, response);
                 break;
+            case "newOrder":
+                request.getRequestDispatcher("/newOrder.jsp").forward(request, response);
+                break;
             case "orders":
+                //request.setAttribute("order",userService.getCurrentOrder(session.getAttribute("userName")));
+                request.getRequestDispatcher("/orders.jsp").forward(request, response);
+                break;
             case "info":
             default:
                 request.getRequestDispatcher("/main.jsp").forward(request, response);
@@ -59,6 +63,8 @@ public class Controller extends HttpServlet {
             String action = request.getParameter("action");
 
             if ("newOrder".equals(action)) {
+                Order order = userService.makeOrder(request.getParameter("address"), request.getParameter("class"),
+                        request.getParameter("comment"));
                 request.getRequestDispatcher("/main.jsp").forward(request, response);
             }
 

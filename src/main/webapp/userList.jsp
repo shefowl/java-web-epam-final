@@ -13,9 +13,9 @@
 <body>
 <section>
     <h3>Order info</h3>
-    <jsp:useBean id="user" scope="request" type="by.epam.buber.entity.User"/>
+    <jsp:useBean id="taxiParticipant" scope="request" type="by.epam.buber.entity.participant.TaxiParticipant"/>
     <tr>
-        <td>ID: ${user.id} | Name: ${user.name} | Password: ${user.password}</td>
+        <td>ID: ${taxiParticipant.id} | Name: ${taxiParticipant.name} | Password: ${taxiParticipant.password}</td>
         <td><a href="hello?action=update">Make order</a></td>
     </tr>
     <br>

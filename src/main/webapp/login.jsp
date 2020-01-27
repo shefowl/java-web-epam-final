@@ -12,7 +12,7 @@
 </head>
 <body>
 <section>
-    <%--<jsp:useBean id="user" scope="request" type="by.epam.buber.entity.User"/>--%>
+    <%--<jsp:useBean id="taxiParticipant" scope="request" type="by.epam.buber.entity.TaxiParticipantParticipant"/>--%>
     <form method="post" action="hello?action=login">
         <dl>
             <dt>Login: </dt>
