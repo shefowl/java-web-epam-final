@@ -35,7 +35,8 @@ public class Order {
         this.ableDrivers = new ArrayList<>(order.ableDrivers);
     }
 
-    public Order(String destinationPoint, String comment, CarClass carClass) {
+    public Order(int userId,String destinationPoint, String comment, CarClass carClass) {
+        this.userId = userId;
         this.destinationPoint = destinationPoint;
         this.comment = comment;
         this.carClass = carClass;
@@ -54,6 +55,23 @@ public class Order {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public int getDriverId() {
+        return driverId;
+    }
+
+    public void setDriverId(int driverId) {
+        this.driverId = driverId;
     }
 
     public int getCoordinates() {

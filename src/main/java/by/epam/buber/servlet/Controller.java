@@ -63,7 +63,9 @@ public class Controller extends HttpServlet {
             String action = request.getParameter("action");
 
             if ("newOrder".equals(action)) {
-                Order order = userService.makeOrder(request.getParameter("address"), request.getParameter("class"),
+                Order order = userService.makeOrder((Integer) session.getAttribute("id"),
+                        request.getParameter("address"),
+                        request.getParameter("class"),
                         request.getParameter("comment"));
                 request.getRequestDispatcher("/main.jsp").forward(request, response);
             }

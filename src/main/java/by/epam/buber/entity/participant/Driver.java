@@ -13,10 +13,34 @@ public class Driver extends TaxiParticipant {
     }
 
     public Car getCar() {
-        return car;
+        return new Car(car);
     }
 
     public void setCar(Car car) {
-        this.car = car;
+        this.car = new Car(car);
+    }
+
+    public String getCoordinates() {
+        return coordinates;
+    }
+
+    public void setCoordinates(String coordinates) {
+        this.coordinates = coordinates;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public boolean isBusy() {
+        return busy;
+    }
+
+    public void setBusy(boolean busy) {
+        this.busy = busy;
     }
 }

@@ -8,6 +8,12 @@ public class Car {
     public Car() {
     }
 
+    public Car(Car car) {
+        this.mark = car.mark;
+        this.model = car.model;
+        this.carClass = car.carClass;
+    }
+
     public Car(String mark, String model, CarClass carClass) {
         this.mark = mark;
         this.model = model;

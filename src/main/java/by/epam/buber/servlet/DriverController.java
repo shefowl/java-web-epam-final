@@ -58,11 +58,11 @@ public class DriverController extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String action = request.getParameter("action");
 
-        if ("newOrder".equals(action)) {
-            userService.makeOrder(request.getParameter("address"), request.getParameter("class"),
-                    request.getParameter("comment"));
-            request.getRequestDispatcher("/main.jsp").forward(request, response);
-        }
+//        if ("newOrder".equals(action)) {
+//            userService.makeOrder(request.getParameter("address"), request.getParameter("class"),
+//                    request.getParameter("comment"));
+//            request.getRequestDispatcher("/main.jsp").forward(request, response);
+//        }
 
         if(action.equals("changeName")){
             String newName;

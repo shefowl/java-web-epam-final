@@ -12,7 +12,7 @@ import java.util.List;
 public class OrderCrudRepositoryImpl implements OrderCrudRepository {
     public static final String SQL_ORDER_REQUEST = "SELECT  * FROM order";
     public static final String SQL_ORDER_REQUEST_BY_ID = "SELECT  * FROM order WHERE id=?";
-    public static final String SQL_ORDER_UPDATE = "INSERT INTO order(participantId, coordinates, destinationPoint," +
+    public static final String SQL_ORDER_UPDATE = "INSERT INTO order(userId, coordinates, destinationPoint," +
             "destinationCoordinates, price, orderComment, carClass, completed)VALUES (?,?,?,?,?,?,?,?)";
     public static final String SQL_ORDER_UPDATE_BY_ID = "UPDATE order SET price=?, completed=? WHERE id=?";
     public static final String SQL_ORDER_DELETE_BY_ID = "DELETE FROM order WHERE id=?";

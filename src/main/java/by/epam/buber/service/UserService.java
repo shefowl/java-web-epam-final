@@ -6,7 +6,7 @@ import by.epam.buber.entity.participant.User;
 import by.epam.buber.repository.impl.UserCrudRepositoryImpl;
 
 public class UserService {
-    UserCrudRepositoryImpl repository = new UserCrudRepositoryImpl();
+    private UserCrudRepositoryImpl repository = new UserCrudRepositoryImpl();
 
     public TaxiParticipant login(String name, String password){
         TaxiParticipant taxiParticipant = repository.getByName(name);
@@ -54,8 +54,8 @@ public class UserService {
         return null;
     }
 
-    public Order makeOrder(String address, String carClass, String comment){
-        Order order = new Order(address, comment,CarClass.valueOf(carClass.toUpperCase()));
+    public Order makeOrder(int userId,String address, String carClass, String comment){
+        Order order = new Order(userId, address, comment,CarClass.valueOf(carClass.toUpperCase()));
         //List<Driver> ableDrivers = repository.getAbleDrivers(address, carClass);
         //order.setAbleDrivers(ableDrivers);
         return order;

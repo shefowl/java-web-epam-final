@@ -1,5 +1,7 @@
 package by.epam.buber.repository.impl;
 
+import by.epam.buber.entity.Car;
+import by.epam.buber.entity.CarClass;
 import by.epam.buber.entity.participant.Admin;
 import by.epam.buber.entity.participant.Driver;
 import by.epam.buber.entity.participant.Role;
@@ -19,6 +21,10 @@ public class UserCrudRepositoryImpl implements UserCrudRepository {
     public static final String SQL_USER_UPDATE = "INSERT INTO participant(name, password)VALUES (?,?)";
     public static final String SQL_USER_UPDATE_BY_ID = "UPDATE participant SET name=?, password=? WHERE id=?";
     public static final String SQL_USER_DELETE_BY_ID = "DELETE FROM participant WHERE id=?";
+    public static final String SQL_USER_JOIN_BY_ID = "SELECT * FROM participant p" +
+            " inner join user u ON u.participantId = p.id WHERE p.id =?";
+    public static final String SQL_DRIVER_JOIN_CAR_JOIN_BY_ID = "SELECT * FROM participant JOIN driver ON " +
+            "participant.id=driver.participantId JOIN car ON participant.id=car.driverId WHERE id=4;";
 
     @Override
     public List<TaxiParticipant> getAll(){
@@ -47,16 +53,16 @@ public class UserCrudRepositoryImpl implements UserCrudRepository {
             statement.setInt(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if(Role.valueOf(resultSet.getString("role")) == Role.USER){
-                    participant = convertFromResultSet(resultSet, new User());
+                    participant = convertParticipantFromResultSet(resultSet, new User());
                     return participant;
                 }
                 else {
                     if(Role.valueOf(resultSet.getString("role")) == Role.ADMIN){
-                        participant = convertFromResultSet(resultSet, new Admin());
+                        participant = convertParticipantFromResultSet(resultSet, new Admin());
                         return participant;
                     }
                     else{
-                        participant = convertFromResultSet(resultSet, new Driver());
+                        participant = convertParticipantFromResultSet(resultSet, new Driver());
                         return participant;
                     }
                 }
@@ -75,16 +81,18 @@ public class UserCrudRepositoryImpl implements UserCrudRepository {
             statement.setString(1, name);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if(Role.valueOf(resultSet.getString("role")) == Role.USER){
-                    participant = convertFromResultSet(resultSet, new User());
+                    participant = convertParticipantFromResultSet(resultSet, new User());
+                    participant = joinUser((User)participant);
                     return participant;
                 }
                 else {
                     if(Role.valueOf(resultSet.getString("role")) == Role.ADMIN){
-                        participant = convertFromResultSet(resultSet, new Admin());
+                        participant = convertParticipantFromResultSet(resultSet, new Admin());
                         return participant;
                     }
                     else{
-                        participant = convertFromResultSet(resultSet, new Driver());
+                        participant = convertParticipantFromResultSet(resultSet, new Driver());
+                        participant = joinDriver((Driver)participant);
                         return participant;
                     }
                 }
@@ -95,7 +103,51 @@ public class UserCrudRepositoryImpl implements UserCrudRepository {
         return null;
     }
 
-    private TaxiParticipant convertFromResultSet(ResultSet resultSet, TaxiParticipant participant){
+    private User joinUser(User user){
+        try (Connection connection = ConnectionPool.getInstance().getConnection();
+             PreparedStatement statement  = connection.prepareStatement(SQL_USER_JOIN_BY_ID)) {
+            statement.setInt(1, user.getId());
+            try(ResultSet resultSet = statement.executeQuery()){
+                user.setBill(resultSet.getBigDecimal("bill"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+
+    private Driver joinDriver(Driver driver){
+        try (Connection connection = ConnectionPool.getInstance().getConnection();
+             PreparedStatement statement  = connection.prepareStatement(SQL_DRIVER_JOIN_CAR_JOIN_BY_ID)) {
+            statement.setInt(1, driver.getId());
+            try(ResultSet resultSet = statement.executeQuery()){
+                driver.setActive(resultSet.getBoolean("active"));
+                driver.setBusy(resultSet.getBoolean("busy"));
+                Car car = new Car(resultSet.getString("mark"), resultSet.getString("model"),
+                        CarClass.valueOf(resultSet.getString("carClass").toUpperCase()));
+                driver.setCar(car);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return driver;
+    }
+
+//    public Car joinCar(Driver driver){
+//        try (Connection connection = ConnectionPool.getInstance().getConnection();
+//             PreparedStatement statement  = connection.prepareStatement(SQL_DRIVER_JOIN_BY_ID)) {
+//            statement.setInt(1, driver.getId());
+//            try(ResultSet resultSet = statement.executeQuery()){
+//                driver.setActive(resultSet.getBoolean("active"));
+//                driver.setBusy(resultSet.getBoolean("busy"));
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        return driver;
+//    }
+
+    private TaxiParticipant convertParticipantFromResultSet(ResultSet resultSet, TaxiParticipant participant){
         try {
             participant.setId(resultSet.getInt("id"));
             participant.setName(resultSet.getString("name"));
