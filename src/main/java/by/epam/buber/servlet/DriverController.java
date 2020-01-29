@@ -1,17 +1,21 @@
 package by.epam.buber.servlet;
 
-import by.epam.buber.service.UserService;
+import by.epam.buber.entity.Order;
+import by.epam.buber.service.DriverService;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.List;
 
+@WebServlet("/driver")
 public class DriverController extends HttpServlet {
-    private UserService userService = new UserService();
+    private DriverService driverService = new DriverService();
 
 
     @Override
@@ -28,8 +32,10 @@ public class DriverController extends HttpServlet {
             case "accept":
                 request.getRequestDispatcher("/newOrder.jsp").forward(request, response);
                 break;
-            case "users":
-                request.getRequestDispatcher("/userList.jsp").forward(request, response);
+            case "driverPage":
+                List<Order> orders = driverService.seeOrders();
+                request.setAttribute("orders", orders);
+                request.getRequestDispatcher("/driverPage.jsp").forward(request, response);
                 break;
             case "userPage":
                 request.getRequestDispatcher("/userPage.jsp").forward(request, response);
@@ -58,26 +64,30 @@ public class DriverController extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String action = request.getParameter("action");
 
-//        if ("newOrder".equals(action)) {
-//            userService.makeOrder(request.getParameter("address"), request.getParameter("class"),
-//                    request.getParameter("comment"));
-//            request.getRequestDispatcher("/main.jsp").forward(request, response);
+        if ("accept".equals(action)) {
+            driverService.acceptOrder(Integer.valueOf(request.getParameter("orderId")),
+                    (Integer) session.getAttribute("id"));
+            request.getRequestDispatcher("/main.jsp").forward(request, response);
+        }
+
+        if(action.equals("driverPage")){
+
+        }
+
+//        if(action.equals("changeName")){
+//            String newName;
+//            newName = driverService.changeName((Integer) session.getAttribute("userId"),
+//                    request.getParameter("name")).getName();
+//            session.setAttribute("userName", newName);
+//            request.getRequestDispatcher("/userPage.jsp").forward(request, response);
 //        }
-
-        if(action.equals("changeName")){
-            String newName;
-            newName = userService.changeName((Integer) session.getAttribute("userId"),
-                    request.getParameter("name")).getName();
-            session.setAttribute("userName", newName);
-            request.getRequestDispatcher("/userPage.jsp").forward(request, response);
-        }
-
-        if(action.equals("changePassword")){
-            userService.changePassword((Integer) session.getAttribute("userId"),
-                    request.getParameter("current"), request.getParameter("new"),
-                    request.getParameter("repeatNew"));
-            request.getRequestDispatcher("/userPage.jsp").forward(request, response);
-        }
+//
+//        if(action.equals("changePassword")){
+//            driverService.changePassword((Integer) session.getAttribute("userId"),
+//                    request.getParameter("current"), request.getParameter("new"),
+//                    request.getParameter("repeatNew"));
+//            request.getRequestDispatcher("/userPage.jsp").forward(request, response);
+//        }
 
     }
 

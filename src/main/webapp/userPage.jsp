@@ -29,6 +29,8 @@
     <br>
     <td><a href="hello?action=taxiParticipants">Show users</a></td>
     <br>
+    <td><a href="app?action=drivers">Show drivers</a></td>
+    <br>
     <td><a href="hello?action=logout">Log Out</a></td>
 </section>
 </body>

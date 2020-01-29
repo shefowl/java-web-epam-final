@@ -4,4 +4,5 @@ import by.epam.buber.entity.participant.TaxiParticipant;
 
 public interface UserCrudRepository extends CrudRepository<Integer, TaxiParticipant> {
     TaxiParticipant getByName(String name);
+    void setBusyById(int id, boolean busy);
 }

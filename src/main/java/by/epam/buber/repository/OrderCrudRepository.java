@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface OrderCrudRepository extends CrudRepository<Integer, Order> {
     List<Order> getOrdersByParticipantId(int id);
+    void setAccepted(int driverId, int orderId);
 }

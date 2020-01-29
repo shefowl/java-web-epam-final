@@ -35,11 +35,21 @@ public class Order {
         this.ableDrivers = new ArrayList<>(order.ableDrivers);
     }
 
-    public Order(int userId,String destinationPoint, String comment, CarClass carClass) {
+    public Order(int userId, String destinationPoint, String comment, CarClass carClass) {
         this.userId = userId;
         this.destinationPoint = destinationPoint;
         this.comment = comment;
         this.carClass = carClass;
+    }
+
+    public Order(int userId, int coordinates, String destinationPoint, String comment, CarClass carClass,
+                 int destinationCoordinates) {
+        this.userId = userId;
+        this.coordinates = coordinates;
+        this.destinationPoint = destinationPoint;
+        this.comment = comment;
+        this.carClass = carClass;
+        this.destinationCoordinates = destinationCoordinates;
     }
 
     public Order(int id, int coordinates, String destinationPoint) {

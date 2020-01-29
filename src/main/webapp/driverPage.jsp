@@ -11,6 +11,8 @@
     <title>Driver page</title>
 </head>
 <body>
-
+<section>
+    <%--<jsp:useBean id="orders" scope="request" type="java.util.List"/>--%>
+</section>
 </body>
 </html>

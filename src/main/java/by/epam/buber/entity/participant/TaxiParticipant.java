@@ -2,6 +2,8 @@ package by.epam.buber.entity.participant;
 
 import by.epam.buber.entity.Order;
 
+import java.util.Objects;
+
 public abstract class TaxiParticipant {
     protected int id;
     protected String name;
@@ -12,6 +14,16 @@ public abstract class TaxiParticipant {
     protected Order currentOrder;
 
     public TaxiParticipant() {
+    }
+
+    public TaxiParticipant(TaxiParticipant participant) {
+        this.id = participant.id;
+        this.name = participant.name;
+        this.password = participant.password;
+        this.role = participant.role;
+        this.email = participant.email;
+        this.phoneNumber = participant.phoneNumber;
+        this.currentOrder = participant.currentOrder;
     }
 
     public TaxiParticipant(String name, String password, String email, String phoneNumber) {
@@ -40,6 +52,38 @@ public abstract class TaxiParticipant {
     public TaxiParticipant(String name, String password) {
         this.name = name;
         this.password = password;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TaxiParticipant that = (TaxiParticipant) o;
+        return getId() == that.getId() &&
+                Objects.equals(getName(), that.getName()) &&
+                Objects.equals(getPassword(), that.getPassword()) &&
+                getRole() == that.getRole() &&
+                Objects.equals(getEmail(), that.getEmail()) &&
+                Objects.equals(getPhoneNumber(), that.getPhoneNumber()) &&
+                Objects.equals(getCurrentOrder(), that.getCurrentOrder());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getName(), getPassword(), getRole(), getEmail(), getPhoneNumber(), getCurrentOrder());
+    }
+
+    @Override
+    public String toString() {
+        return "TaxiParticipant{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", role=" + role +
+                ", email='" + email + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", currentOrder=" + currentOrder +
+                '}';
     }
 
     public int getId() {
