@@ -3,15 +3,18 @@ package by.epam.buber.entity.participant;
 import by.epam.buber.entity.Car;
 import by.epam.buber.entity.Order;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class Driver extends TaxiParticipant {
     private Car car;
-    private String coordinates;
+    private int coordinates;
     private boolean active;
     private boolean busy;
+    private BigDecimal pricePerKm;
     private List<Order> orders;
 
     public Driver() {
@@ -24,6 +27,7 @@ public class Driver extends TaxiParticipant {
         this.coordinates = driver.coordinates;
         this.active = driver.active;
         this.busy = driver.busy;
+        this.pricePerKm = new BigDecimal(driver.pricePerKm.doubleValue());
         this.orders = new ArrayList<>(orders);
     }
 
@@ -33,24 +37,28 @@ public class Driver extends TaxiParticipant {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Driver driver = (Driver) o;
-        return isActive() == driver.isActive() &&
-                isBusy() == driver.isBusy() &&
-                Objects.equals(getCar(), driver.getCar()) &&
-                Objects.equals(getCoordinates(), driver.getCoordinates());
+        return coordinates == driver.coordinates &&
+                active == driver.active &&
+                busy == driver.busy &&
+                Objects.equals(car, driver.car) &&
+                Objects.equals(pricePerKm, driver.pricePerKm) &&
+                Objects.equals(orders, driver.orders);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), getCar(), getCoordinates(), isActive(), isBusy());
+        return Objects.hash(super.hashCode(), car, coordinates, active, busy, pricePerKm, orders);
     }
 
     @Override
     public String toString() {
         return "Driver{" +
                 "car=" + car +
-                ", coordinates='" + coordinates + '\'' +
+                ", coordinates=" + coordinates +
                 ", active=" + active +
                 ", busy=" + busy +
+                ", pricePerKm=" + pricePerKm +
+                ", orders=" + orders +
                 ", id=" + id +
                 ", name='" + name + '\'' +
                 ", password='" + password + '\'' +
@@ -69,11 +77,11 @@ public class Driver extends TaxiParticipant {
         this.car = new Car(car);
     }
 
-    public String getCoordinates() {
+    public int getCoordinates() {
         return coordinates;
     }
 
-    public void setCoordinates(String coordinates) {
+    public void setCoordinates(int coordinates) {
         this.coordinates = coordinates;
     }
 
@@ -91,6 +99,14 @@ public class Driver extends TaxiParticipant {
 
     public void setBusy(boolean busy) {
         this.busy = busy;
+    }
+
+    public BigDecimal getPricePerKm() {
+        return new BigDecimal(pricePerKm.doubleValue());
+    }
+
+    public void setPricePerKm(BigDecimal pricePerKm) {
+        this.pricePerKm = new BigDecimal(pricePerKm.doubleValue());
     }
 
     public List<Order> getOrders() {

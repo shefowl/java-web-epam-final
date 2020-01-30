@@ -6,6 +6,7 @@ import by.epam.buber.entity.participant.User;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Order {
     private int id;
@@ -17,6 +18,7 @@ public class Order {
     private BigDecimal price;
     private String comment;
     private CarClass carClass;
+    private boolean started;
     private boolean completed;
     private List<Driver> ableDrivers;
 
@@ -31,6 +33,7 @@ public class Order {
         this.price = new BigDecimal(order.price.doubleValue());
         this.comment = order.comment;
         this.carClass = order.carClass;
+        this.started = order.started;
         this.completed = order.completed;
         this.ableDrivers = new ArrayList<>(order.ableDrivers);
     }
@@ -57,6 +60,48 @@ public class Order {
         this.coordinates = coordinates;
         this.destinationPoint = destinationPoint;
         User user = new User();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Order order = (Order) o;
+        return id == order.id &&
+                userId == order.userId &&
+                driverId == order.driverId &&
+                coordinates == order.coordinates &&
+                destinationCoordinates == order.destinationCoordinates &&
+                started == order.started &&
+                completed == order.completed &&
+                Objects.equals(destinationPoint, order.destinationPoint) &&
+                Objects.equals(price, order.price) &&
+                Objects.equals(comment, order.comment) &&
+                carClass == order.carClass &&
+                Objects.equals(ableDrivers, order.ableDrivers);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, userId, driverId, coordinates, destinationPoint, destinationCoordinates, price, comment, carClass, started, completed, ableDrivers);
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", driverId=" + driverId +
+                ", coordinates=" + coordinates +
+                ", destinationPoint='" + destinationPoint + '\'' +
+                ", destinationCoordinates=" + destinationCoordinates +
+                ", price=" + price +
+                ", comment='" + comment + '\'' +
+                ", carClass=" + carClass +
+                ", started=" + started +
+                ", completed=" + completed +
+                ", ableDrivers=" + ableDrivers +
+                '}';
     }
 
     public int getId() {
@@ -130,6 +175,14 @@ public class Order {
 
     public void setCarClass(CarClass carClass) {
         this.carClass = carClass;
+    }
+
+    public boolean isStarted() {
+        return started;
+    }
+
+    public void setStarted(boolean started) {
+        this.started = started;
     }
 
     public boolean isCompleted() {

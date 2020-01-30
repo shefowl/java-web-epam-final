@@ -15,7 +15,9 @@
 <section>
     <section>
         <jsp:useBean id="orders" scope="request" type="java.util.List"/>
-        <%--<jsp:useBean id ="driver" class="by.epam.buber.entity.participant.Driver" scope="request"/>--%>
+        <jsp:useBean id="orderAccepted" scope="request" type="java.lang.Boolean"/>
+    <%--<jsp:useBean id ="driver" class="by.epam.buber.entity.participant.Driver" scope="request"/>--%>
+        <c:if test="${!orderAccepted}">
         <table>
             <c:forEach items="${orders}" var="currentOrder">
                 <td>
@@ -31,6 +33,7 @@
                 </tr>
             </c:forEach>
         </table>
+        </c:if>
     </section></section>
 </body>
 </html>

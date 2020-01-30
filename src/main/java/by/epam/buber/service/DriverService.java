@@ -22,17 +22,25 @@ public class DriverService {
         userCrudRepository.setBusyById(id, false);
     }
 
-    public void acceptOrder(int orderId, int driverId){
-        //order.setDriverId(driverId);
-        //orderCrudRepository.save(order.getId(), order);
-        orderCrudRepository.setAccepted(driverId, orderId);
-        userCrudRepository.setBusyById(driverId, true);
-        //return order;
+    public boolean acceptedOrder(int driverId){
+        return orderCrudRepository.driverAccepted(driverId);
     }
 
-    public Order completeOrder(Order order){
-        order.setCompleted(true);
-        orderCrudRepository.save(order.getId(), order);
-        return order;
+    public Order takeCurrentOrder(int id){
+        return orderCrudRepository.getCurrentByDriverId(id);
+    }
+
+    public void startTrip(int id){
+        orderCrudRepository.setStartedById(id, true);
+    }
+
+    public void acceptOrder(int orderId, int driverId){
+        orderCrudRepository.setAccepted(driverId, orderId);
+        userCrudRepository.setBusyById(driverId, true);
+    }
+
+    public void completeOrder(int orderId, int driverId){
+        orderCrudRepository.setCompleted(true, orderId);
+        userCrudRepository.setBusyById(driverId, false);
     }
 }

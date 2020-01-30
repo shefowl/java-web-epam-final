@@ -7,6 +7,8 @@ import by.epam.buber.entity.participant.User;
 import by.epam.buber.repository.impl.OrderCrudRepositoryImpl;
 import by.epam.buber.repository.impl.UserCrudRepositoryImpl;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -88,12 +90,33 @@ public class UserService {
         return orderCrudRepository.driverRequested(orderId);
     }
 
-    public void cancelOrder(int orderId){
-        orderCrudRepository.delete(orderId);
-        orderCrudRepository.deleteFromDriverList(orderId);
+    public boolean cancelOrder(int orderId){
+        if(orderCrudRepository.orderStarted(orderId)) {
+            orderCrudRepository.delete(orderId);
+            orderCrudRepository.deleteFromDriverList(orderId);
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
-    public List<Driver>getDrivers(){
+    public void setOrderPrice(BigDecimal price, int id){
+        orderCrudRepository.setPrice(price, id);
+    }
+
+    public List<Driver> showAbleDrivers(){
+        //List<Driver> drivers = userCrudRepository.getAllDrivers();
         return userCrudRepository.getAllDrivers();
+    }
+    public List<BigDecimal> computeOrderPricePerDriver(List<Driver> drivers, Order order){
+        List<BigDecimal> prices = new ArrayList<>();
+        for (Driver driver: drivers) {
+            double price = Math.abs(driver.getCoordinates() - order.getCoordinates()) / 100000000.0;
+            price *= driver.getPricePerKm().doubleValue();
+            BigDecimal bigDecimal = BigDecimal.valueOf(price);
+            prices.add(bigDecimal);
+        }
+        return prices;
     }
 }

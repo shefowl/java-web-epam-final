@@ -5,6 +5,7 @@ import by.epam.buber.entity.Order;
 import by.epam.buber.repository.OrderCrudRepository;
 import by.epam.buber.repository.pool.ConnectionPool;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,17 +16,21 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
     public static final String SQL_ORDER_REQUEST_BY_USER_ID = "SELECT  * FROM carOrder WHERE userId=?";
     public static final String SQL_ORDER_REQUEST_BY_DRIVER_ID = "SELECT  * FROM carOrder WHERE driverId=?";
     public static final String SQL_CHECK_DRIVER_REQUEST = "SELECT  * FROM driverOrderlist WHERE orderId=?";
+    public static final String SQL_CHECK_DRIVER_ACCEPT = "SELECT  * FROM carorder WHERE driverId=?";
     public static final String SQL_ORDER_UPDATE = "INSERT INTO carOrder(userId, coordinates, destinationPoint," +
             " price, orderComment, carClass, completed, destinationCoordinates," +
             " driverId)VALUES (?,?,?,?,?,?,?,?,?)";
     public static final String SQL_ORDER_UPDATE_BY_ID = "UPDATE carOrder SET price=?, completed=? WHERE id=?";
     public static final String SQL_ORDER_UPDATE_ACCEPTED_BY_ID = "UPDATE carOrder SET driverId=? WHERE id=?";
+    public static final String SQL_ORDER_UPDATE_COMPLETED_BY_ID = "UPDATE carOrder SET completed=? WHERE id=?";
+    public static final String SQL_ORDER_UPDATE_STARTED_BY_ID = "UPDATE carOrder SET started=? WHERE id=?";
+    public static final String SQL_ORDER_UPDATE_PRICE_BY_ID = "UPDATE carOrder SET price=? WHERE id=?";
     public static final String SQL_ORDER_DELETE_BY_ID = "DELETE FROM carOrder WHERE id=?";
     public static final String SQL_DRIVER_ORDER_LIST_DELETE_BY_ORDER_ID = "DELETE FROM driverOrderList WHERE orderId=?";
     public static final String SQL_ORDER_REQUEST_FROM_DRIVER_LIST = "SELECT c.* FROM carorder c INNER JOIN " +
             "driverOrderList d ON c.id=d.orderId WHERE d.driverId=?";
-    public static final String SQL_FOREIGN_KEY_CHEKCS_0 = "SET FOREIGN_KEY_CHECKS = 0";
-    public static final String SQL_FOREIGN_KEY_CHEKCS_1 = "SET FOREIGN_KEY_CHECKS = 1";
+    public static final String SET_FOREIGN_KEY_CHECKS_0 = "SET FOREIGN_KEY_CHECKS = 0";
+    public static final String SET_FOREIGN_KEY_CHECKS_1 = "SET FOREIGN_KEY_CHECKS = 1";
 
     @Override
     public List<Order> getOrdersByParticipantId(int id) {
@@ -101,7 +106,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
              PreparedStatement statement  = connection.prepareStatement(SQL_ORDER_REQUEST_BY_USER_ID)) {
             statement.setInt(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
-                if(resultSet.next()){
+                while(resultSet.next()){
                     if(!resultSet.getBoolean("completed")) {
                         order = convertFromResultSet(resultSet);
                     }
@@ -113,7 +118,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
         return order;
     }
 
-    public List<Order> getCurrentByDriverId(int id) {
+    public List<Order> getCurrentOrdersByDriverId(int id) {
         Order order = null;
         List<Order> orders = new ArrayList<>();
         try (Connection connection = ConnectionPool.getInstance().getConnection();
@@ -131,6 +136,23 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
         }
         return orders;
     }
+    public Order getCurrentByDriverId(int id) {
+        Order order = null;
+        try (Connection connection = ConnectionPool.getInstance().getConnection();
+             PreparedStatement statement  = connection.prepareStatement(SQL_ORDER_REQUEST_BY_USER_ID)) {
+            statement.setInt(1, id);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while(resultSet.next()){
+                    if(!resultSet.getBoolean("completed")) {
+                        order = convertFromResultSet(resultSet);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return order;
+    }
 
     public boolean driverRequested(int id){
         boolean requested = false;
@@ -145,6 +167,50 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
         }
         return requested;
     }
+
+    public boolean driverAccepted(int id){
+        boolean requested = false;
+        try (Connection connection = ConnectionPool.getInstance().getConnection();
+             PreparedStatement statement  = connection.prepareStatement(SQL_CHECK_DRIVER_ACCEPT)) {
+            statement.setInt(1, id);
+            try(ResultSet resultSet = statement.executeQuery()) {
+                requested = resultSet.next();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return requested;
+    }
+
+    public void setStartedById(int id, boolean started) {
+        try (Connection connection = ConnectionPool.getInstance().getConnection();
+             PreparedStatement statement = connection.prepareStatement(SQL_ORDER_UPDATE_STARTED_BY_ID)) {
+            statement.setBoolean(1, started);
+            statement.setInt(2, id);
+            statement.executeUpdate();
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean orderStarted(int id){
+        boolean started = false;
+        try (Connection connection = ConnectionPool.getInstance().getConnection();
+             PreparedStatement statement = connection.prepareStatement(SQL_ORDER_UPDATE_STARTED_BY_ID)) {
+            statement.setInt(1, id);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if(resultSet.next()) {
+                    started = resultSet.getBoolean("started");
+                }
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return started;
+    }
+
 
     public List<Order> getCurrentFromDriverList(int id) {
         Order order = null;
@@ -177,6 +243,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
             order.setCompleted(resultSet.getBoolean("completed"));
             order.setUserId(resultSet.getInt("userId"));
             order.setDriverId(resultSet.getInt("driverId"));
+            order.setStarted(resultSet.getBoolean("started"));
         }
         catch (SQLException e){
             e.printStackTrace();
@@ -205,7 +272,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
              Statement statementCheks0 = connection.createStatement();
              Statement statementCheks1 = connection.createStatement();
              PreparedStatement statement = connection.prepareStatement(SQL_ORDER_UPDATE)) {
-            statementCheks0.executeQuery(SQL_FOREIGN_KEY_CHEKCS_0); // поместить в очередь?
+            statementCheks0.executeQuery(SET_FOREIGN_KEY_CHECKS_0); // поместить в очередь?
             statement.setInt(1, order.getUserId());
             statement.setInt(2, order.getCoordinates());
             statement.setString(3, order.getDestinationPoint());
@@ -216,7 +283,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
             statement.setInt(8, order.getDestinationCoordinates());
             statement.setInt(9, order.getDriverId());
             statement.executeUpdate();
-            statementCheks0.executeQuery(SQL_FOREIGN_KEY_CHEKCS_1);
+            statementCheks0.executeQuery(SET_FOREIGN_KEY_CHECKS_1);
         }
         catch (SQLException e) {
             e.printStackTrace();
@@ -228,6 +295,30 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_ORDER_UPDATE_ACCEPTED_BY_ID)) {
             statement.setInt(1, driverId);
+            statement.setInt(2, orderId);
+            statement.executeUpdate();
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setCompleted(boolean completed, int orderId) {
+        try (Connection connection = ConnectionPool.getInstance().getConnection();
+             PreparedStatement statement = connection.prepareStatement(SQL_ORDER_UPDATE_COMPLETED_BY_ID)) {
+            statement.setBoolean(1, completed);
+            statement.setInt(2, orderId);
+            statement.executeUpdate();
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setPrice(BigDecimal price, int orderId) {
+        try (Connection connection = ConnectionPool.getInstance().getConnection();
+             PreparedStatement statement = connection.prepareStatement(SQL_ORDER_UPDATE_PRICE_BY_ID)) {
+            statement.setBigDecimal(1, price);
             statement.setInt(2, orderId);
             statement.executeUpdate();
         }

@@ -34,6 +34,8 @@ public class DriverController extends HttpServlet {
                 break;
             case "driverOrders":
                 List<Order> orders = driverService.seeOrders((Integer)session.getAttribute("userId"));
+                request.setAttribute("orderAccepted",
+                        driverService.acceptedOrder((Integer)session.getAttribute("userId")));
                 request.setAttribute("orders", orders);
                 request.getRequestDispatcher("/driverOrders.jsp").forward(request, response);
                 break;
@@ -48,6 +50,12 @@ public class DriverController extends HttpServlet {
                 break;
             case "newOrder":
                 request.getRequestDispatcher("/newOrder.jsp").forward(request, response);
+                break;
+            case "driverCurrentOrder":
+                Order currentOrder = driverService.takeCurrentOrder((Integer) session.getAttribute("userId"));
+                request.setAttribute("currentOrder", currentOrder);
+                //request.setAttribute("acceptedOrder", driverService.driverRequested(currentOrder.getId()));
+                request.getRequestDispatcher("/userOrder.jsp").forward(request, response);
                 break;
             case "orders":
             case "info":
@@ -65,10 +73,18 @@ public class DriverController extends HttpServlet {
         String action = request.getParameter("action");
 
         if (action.equals("acceptOrder")) {
-            //String s = request.getParameter("orderId");
-            //int i = Integer.valueOf(request.getParameter("orderId"));
-            //int j = (Integer) session.getAttribute("userId");
             driverService.acceptOrder(Integer.valueOf(request.getParameter("acceptedOrder")),
+                    (Integer) session.getAttribute("userId"));
+            request.getRequestDispatcher("/driverPage.jsp").forward(request, response);
+        }
+
+        if (action.equals("startTrip")) {
+            driverService.startTrip(Integer.valueOf(request.getParameter("startedOrder")));
+            request.getRequestDispatcher("/driverPage.jsp").forward(request, response);
+        }
+
+        if (action.equals("complete")) {
+            driverService.completeOrder(Integer.valueOf(request.getParameter("startedOrder")),
                     (Integer) session.getAttribute("userId"));
             request.getRequestDispatcher("/driverPage.jsp").forward(request, response);
         }
@@ -76,21 +92,6 @@ public class DriverController extends HttpServlet {
         if(action.equals("driverPage")){
 
         }
-
-//        if(action.equals("changeName")){
-//            String newName;
-//            newName = driverService.changeName((Integer) session.getAttribute("userId"),
-//                    request.getParameter("name")).getName();
-//            session.setAttribute("userName", newName);
-//            request.getRequestDispatcher("/userPage.jsp").forward(request, response);
-//        }
-//
-//        if(action.equals("changePassword")){
-//            driverService.changePassword((Integer) session.getAttribute("userId"),
-//                    request.getParameter("current"), request.getParameter("new"),
-//                    request.getParameter("repeatNew"));
-//            request.getRequestDispatcher("/userPage.jsp").forward(request, response);
-//        }
 
     }
 

@@ -27,7 +27,7 @@ public class UserCrudRepositoryImpl implements UserCrudRepository {
             " inner join user u ON u.participantId = p.id WHERE p.id =?";
     public static final String SQL_DRIVER_JOIN_CAR_JOIN_BY_ID = "SELECT * FROM participant JOIN driver ON " +
             "participant.id=driver.participantId JOIN car ON participant.id=car.driverId WHERE id=?;";
-    public static final String SQL_DRIVER_UPDATE_BUSY_BY_ID = "UPDATE driver SET busy=? WHERE id=?";
+    public static final String SQL_DRIVER_UPDATE_BUSY_BY_ID = "UPDATE driver SET busy=? WHERE participantId=?";
     public static final String SQL_DRIVER_GET_ALL_BY_ID = "SELECT * FROM participant WHERE role='DRIVER'";
 
 
@@ -61,6 +61,7 @@ public class UserCrudRepositoryImpl implements UserCrudRepository {
                 driver.setId(resultSet.getInt("id"));
                 driver.setName(resultSet.getString("name"));
                 driver.setEmail(resultSet.getString("email"));
+                driver = joinDriver(driver);
                 drivers.add(driver);
             }
         } catch (SQLException e) {
@@ -153,6 +154,8 @@ public class UserCrudRepositoryImpl implements UserCrudRepository {
                     Car car = new Car(resultSet.getString("mark"), resultSet.getString("model"),
                             CarClass.valueOf(resultSet.getString("carClass").toUpperCase()));
                     driver.setCar(car);
+                    driver.setCoordinates(resultSet.getInt("coordinates"));
+                    driver.setPricePerKm(resultSet.getBigDecimal("pricePerKm"));
                 }
             }
         } catch (SQLException e) {
