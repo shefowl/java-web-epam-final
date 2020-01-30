@@ -21,7 +21,7 @@
     <br>
     <td><a href="app?action=newOrder">New order</a></td>
     <br>
-    <td><a href="hello?action=info">Show orders</a></td>
+    <td><a href="app?action=userOrder">Show current order</a></td>
     <br>
     <td><a href="app?action=changeName">Change username</a></td>
     <br>

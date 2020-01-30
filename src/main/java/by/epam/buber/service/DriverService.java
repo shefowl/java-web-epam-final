@@ -1,7 +1,6 @@
 package by.epam.buber.service;
 
 import by.epam.buber.entity.Order;
-import by.epam.buber.entity.participant.Driver;
 import by.epam.buber.repository.impl.OrderCrudRepositoryImpl;
 import by.epam.buber.repository.impl.UserCrudRepositoryImpl;
 
@@ -11,8 +10,8 @@ public class DriverService {
     private OrderCrudRepositoryImpl orderCrudRepository = new OrderCrudRepositoryImpl();
     private UserCrudRepositoryImpl userCrudRepository = new UserCrudRepositoryImpl();
 
-    public List<Order> seeOrders(){
-        return orderCrudRepository.getAll();
+    public List<Order> seeOrders(int id){
+        return orderCrudRepository.getCurrentFromDriverList(id);
     }
 
     public void setBusy(int id){

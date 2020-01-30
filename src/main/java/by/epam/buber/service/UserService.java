@@ -76,8 +76,21 @@ public class UserService {
     }
 
     public void sendDriverRequest(int driverId, int userId){
-        Order order = orderCrudRepository.getByUserId(userId);
+        Order order = orderCrudRepository.getCurrentByUserId(userId);
         userCrudRepository.setOrderToDriver(order, driverId);
+    }
+
+    public Order takeCurrentOrder(int id){
+        return orderCrudRepository.getCurrentByUserId(id);
+    }
+
+    public boolean driverRequested(int orderId){
+        return orderCrudRepository.driverRequested(orderId);
+    }
+
+    public void cancelOrder(int orderId){
+        orderCrudRepository.delete(orderId);
+        orderCrudRepository.deleteFromDriverList(orderId);
     }
 
     public List<Driver>getDrivers(){

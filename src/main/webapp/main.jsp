@@ -12,11 +12,10 @@
 </head>
 <body>
 <section>
+    <h3>Main page</h3>
     <td><a href="hello?action=update">New order</a></td>
     <br>
     <td><a href="hello?action=info">Show orders</a></td>
-    <br>
-    <td><a href="hello?action=taxiParticipants">Show taxiParticipants</a></td>
     <br>
     <td><a href="hello?action=login">Log In</a></td>
     <br>

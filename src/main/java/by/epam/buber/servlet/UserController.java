@@ -1,6 +1,7 @@
 package by.epam.buber.servlet;
 
 import by.epam.buber.entity.Order;
+import by.epam.buber.entity.participant.Role;
 import by.epam.buber.entity.participant.TaxiParticipant;
 import by.epam.buber.service.UserService;
 
@@ -74,7 +75,12 @@ public class UserController extends HttpServlet {
             session.setAttribute("userRole", taxiParticipant.getRole());
             session.setAttribute("userId", taxiParticipant.getId());
             request.setAttribute("taxiParticipant", taxiParticipant);
-            request.getRequestDispatcher("/userPage.jsp").forward(request, response);
+            if(taxiParticipant.getRole() == Role.USER) {
+                request.getRequestDispatcher("/userPage.jsp").forward(request, response);
+            }
+            else {
+                request.getRequestDispatcher("/driverPage.jsp").forward(request, response);
+            }
         }
 
     }

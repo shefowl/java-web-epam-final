@@ -26,9 +26,10 @@ public class UserCrudRepositoryImpl implements UserCrudRepository {
     public static final String SQL_USER_JOIN_BY_ID = "SELECT * FROM participant p" +
             " inner join user u ON u.participantId = p.id WHERE p.id =?";
     public static final String SQL_DRIVER_JOIN_CAR_JOIN_BY_ID = "SELECT * FROM participant JOIN driver ON " +
-            "participant.id=driver.participantId JOIN car ON participant.id=car.driverId WHERE id=4;";
+            "participant.id=driver.participantId JOIN car ON participant.id=car.driverId WHERE id=?;";
     public static final String SQL_DRIVER_UPDATE_BUSY_BY_ID = "UPDATE driver SET busy=? WHERE id=?";
     public static final String SQL_DRIVER_GET_ALL_BY_ID = "SELECT * FROM participant WHERE role='DRIVER'";
+
 
     @Override
     public List<TaxiParticipant> getAll(){
@@ -146,11 +147,13 @@ public class UserCrudRepositoryImpl implements UserCrudRepository {
              PreparedStatement statement  = connection.prepareStatement(SQL_DRIVER_JOIN_CAR_JOIN_BY_ID)) {
             statement.setInt(1, driver.getId());
             try(ResultSet resultSet = statement.executeQuery()){
-                driver.setActive(resultSet.getBoolean("active"));
-                driver.setBusy(resultSet.getBoolean("busy"));
-                Car car = new Car(resultSet.getString("mark"), resultSet.getString("model"),
-                        CarClass.valueOf(resultSet.getString("carClass").toUpperCase()));
-                driver.setCar(car);
+                if(resultSet.next()) {
+                    driver.setActive(resultSet.getBoolean("active"));
+                    driver.setBusy(resultSet.getBoolean("busy"));
+                    Car car = new Car(resultSet.getString("mark"), resultSet.getString("model"),
+                            CarClass.valueOf(resultSet.getString("carClass").toUpperCase()));
+                    driver.setCar(car);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();

@@ -55,7 +55,12 @@ public class Controller extends HttpServlet {
                 //request.setAttribute("order",userService.getCurrentOrder(session.getAttribute("userName")));
                 request.getRequestDispatcher("/orders.jsp").forward(request, response);
                 break;
-            case "info":
+            case "userOrder":
+                Order order = userService.takeCurrentOrder((Integer) session.getAttribute("userId"));
+                request.setAttribute("currentOrder", order);
+                request.setAttribute("driverRequested", userService.driverRequested(order.getId()));
+                request.getRequestDispatcher("/userOrder.jsp").forward(request, response);
+                break;
             default:
                 request.getRequestDispatcher("/main.jsp").forward(request, response);
                 break;
@@ -86,13 +91,20 @@ public class Controller extends HttpServlet {
             }
 
             if(action.equals("drivers")){
-                 userService.sendDriverRequest(Integer.valueOf(request.getParameter("acceptedDriver")));
+                 userService.sendDriverRequest(Integer.valueOf(request.getParameter("acceptedDriver")),
+                         (Integer)session.getAttribute("userId"));
+                request.getRequestDispatcher("/userPage.jsp").forward(request, response);
             }
 
             if(action.equals("changePassword")){
                 userService.changePassword((Integer) session.getAttribute("userId"),
                         request.getParameter("current"), request.getParameter("new"),
                         request.getParameter("repeatNew"));
+                request.getRequestDispatcher("/userPage.jsp").forward(request, response);
+            }
+
+            if(action.equals("cancelOrder")){
+                userService.cancelOrder(Integer.valueOf(request.getParameter("canceledOrder")));
                 request.getRequestDispatcher("/userPage.jsp").forward(request, response);
             }
 

@@ -32,10 +32,10 @@ public class DriverController extends HttpServlet {
             case "accept":
                 request.getRequestDispatcher("/newOrder.jsp").forward(request, response);
                 break;
-            case "driverPage":
-                List<Order> orders = driverService.seeOrders();
+            case "driverOrders":
+                List<Order> orders = driverService.seeOrders((Integer)session.getAttribute("userId"));
                 request.setAttribute("orders", orders);
-                request.getRequestDispatcher("/driverPage.jsp").forward(request, response);
+                request.getRequestDispatcher("/driverOrders.jsp").forward(request, response);
                 break;
             case "userPage":
                 request.getRequestDispatcher("/userPage.jsp").forward(request, response);
@@ -64,10 +64,13 @@ public class DriverController extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String action = request.getParameter("action");
 
-        if ("accept".equals(action)) {
-            driverService.acceptOrder(Integer.valueOf(request.getParameter("orderId")),
-                    (Integer) session.getAttribute("id"));
-            request.getRequestDispatcher("/main.jsp").forward(request, response);
+        if (action.equals("acceptOrder")) {
+            //String s = request.getParameter("orderId");
+            //int i = Integer.valueOf(request.getParameter("orderId"));
+            //int j = (Integer) session.getAttribute("userId");
+            driverService.acceptOrder(Integer.valueOf(request.getParameter("acceptedOrder")),
+                    (Integer) session.getAttribute("userId"));
+            request.getRequestDispatcher("/driverPage.jsp").forward(request, response);
         }
 
         if(action.equals("driverPage")){
