@@ -29,6 +29,10 @@ public class UserCrudRepositoryImpl implements UserCrudRepository {
             "participant.id=driver.participantId JOIN car ON participant.id=car.driverId WHERE id=?;";
     public static final String SQL_DRIVER_UPDATE_BUSY_BY_ID = "UPDATE driver SET busy=? WHERE participantId=?";
     public static final String SQL_DRIVER_GET_ALL_BY_ID = "SELECT * FROM participant WHERE role='DRIVER'";
+    public static final String SQL_DRIVER_GET_ABLE_BY_COORDINATES_AND_CAR_CLASS =
+            " SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM driver JOIN car ON " +
+                    "participantId=driverId WHERE carClass=?) AS T WHERE active=1)" +
+                    " AS D WHERE busy=0) AS P JOIN participant ON id=driverId;";
 
 
     @Override
@@ -69,6 +73,27 @@ public class UserCrudRepositoryImpl implements UserCrudRepository {
         }
         return drivers;
     }
+
+    public List<Driver> getAbleDriversByCarClass(CarClass carClass){
+        List<Driver> drivers = new ArrayList<>();
+        try (Connection connection = ConnectionPool.getInstance().getConnection();
+             PreparedStatement statement = connection.prepareStatement(SQL_DRIVER_GET_ABLE_BY_COORDINATES_AND_CAR_CLASS)) {
+            statement.setString(1, carClass.name());
+            ResultSet resultSet = statement.executeQuery();
+            while(resultSet.next()) {
+                Driver driver = new Driver();
+                driver.setId(resultSet.getInt("id"));
+                driver.setName(resultSet.getString("name"));
+                driver.setEmail(resultSet.getString("email"));
+                driver = joinDriver(driver);
+                drivers.add(driver);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return drivers;
+    }
+
 
     @Override
     public TaxiParticipant getById(int id) {
@@ -154,7 +179,7 @@ public class UserCrudRepositoryImpl implements UserCrudRepository {
                     Car car = new Car(resultSet.getString("mark"), resultSet.getString("model"),
                             CarClass.valueOf(resultSet.getString("carClass").toUpperCase()));
                     driver.setCar(car);
-                    driver.setCoordinates(resultSet.getInt("coordinates"));
+                    driver.setCoordinates(resultSet.getLong("coordinates"));
                     driver.setPricePerKm(resultSet.getBigDecimal("pricePerKm"));
                 }
             }

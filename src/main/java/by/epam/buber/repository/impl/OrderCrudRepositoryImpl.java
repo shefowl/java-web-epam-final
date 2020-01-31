@@ -15,17 +15,20 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
     public static final String SQL_ORDER_REQUEST_BY_ID = "SELECT  * FROM carOrder WHERE id=?";
     public static final String SQL_ORDER_REQUEST_BY_USER_ID = "SELECT  * FROM carOrder WHERE userId=?";
     public static final String SQL_ORDER_REQUEST_BY_DRIVER_ID = "SELECT  * FROM carOrder WHERE driverId=?";
+    public static final String SQL_ORDER_REQUEST_STARTED_BY_ID = "SELECT started FROM carOrder WHERE id=?";
     public static final String SQL_CHECK_DRIVER_REQUEST = "SELECT  * FROM driverOrderlist WHERE orderId=?";
     public static final String SQL_CHECK_DRIVER_ACCEPT = "SELECT  * FROM carorder WHERE driverId=?";
     public static final String SQL_ORDER_UPDATE = "INSERT INTO carOrder(userId, coordinates, destinationPoint," +
             " price, orderComment, carClass, completed, destinationCoordinates," +
-            " driverId)VALUES (?,?,?,?,?,?,?,?,?)";
+            " driverId, started)VALUES (?,?,?,?,?,?,?,?,?,?)";
     public static final String SQL_ORDER_UPDATE_BY_ID = "UPDATE carOrder SET price=?, completed=? WHERE id=?";
     public static final String SQL_ORDER_UPDATE_ACCEPTED_BY_ID = "UPDATE carOrder SET driverId=? WHERE id=?";
     public static final String SQL_ORDER_UPDATE_COMPLETED_BY_ID = "UPDATE carOrder SET completed=? WHERE id=?";
     public static final String SQL_ORDER_UPDATE_STARTED_BY_ID = "UPDATE carOrder SET started=? WHERE id=?";
     public static final String SQL_ORDER_UPDATE_PRICE_BY_ID = "UPDATE carOrder SET price=? WHERE id=?";
     public static final String SQL_ORDER_DELETE_BY_ID = "DELETE FROM carOrder WHERE id=?";
+    public static final String DELETE_FROM_DRIVER_ORDER_LIST_EXCEPT_ORDER_ID =
+            "DELETE FROM driverOrderList WHERE orderId!=?";
     public static final String SQL_DRIVER_ORDER_LIST_DELETE_BY_ORDER_ID = "DELETE FROM driverOrderList WHERE orderId=?";
     public static final String SQL_ORDER_REQUEST_FROM_DRIVER_LIST = "SELECT c.* FROM carorder c INNER JOIN " +
             "driverOrderList d ON c.id=d.orderId WHERE d.driverId=?";
@@ -139,7 +142,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
     public Order getCurrentByDriverId(int id) {
         Order order = null;
         try (Connection connection = ConnectionPool.getInstance().getConnection();
-             PreparedStatement statement  = connection.prepareStatement(SQL_ORDER_REQUEST_BY_USER_ID)) {
+             PreparedStatement statement  = connection.prepareStatement(SQL_ORDER_REQUEST_BY_DRIVER_ID)) {
             statement.setInt(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while(resultSet.next()){
@@ -197,7 +200,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
     public boolean orderStarted(int id){
         boolean started = false;
         try (Connection connection = ConnectionPool.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_ORDER_UPDATE_STARTED_BY_ID)) {
+             PreparedStatement statement = connection.prepareStatement(SQL_ORDER_REQUEST_STARTED_BY_ID)) {
             statement.setInt(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if(resultSet.next()) {
@@ -234,9 +237,9 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
         Order order = new Order();
         try {
             order.setId(resultSet.getInt("id"));
-            order.setCoordinates(resultSet.getInt("coordinates"));
+            order.setCoordinates(resultSet.getLong("coordinates"));
             order.setDestinationPoint(resultSet.getString("destinationPoint"));
-            order.setDestinationCoordinates(resultSet.getInt("destinationCoordinates"));
+            order.setDestinationCoordinates(resultSet.getLong("destinationCoordinates"));
             order.setPrice(resultSet.getBigDecimal("price"));
             order.setComment(resultSet.getString("orderComment"));
             order.setCarClass(CarClass.valueOf(resultSet.getString("carClass")));
@@ -269,21 +272,22 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
     @Override
     public void save(Order order) {
         try (Connection connection = ConnectionPool.getInstance().getConnection();
-             Statement statementCheks0 = connection.createStatement();
-             Statement statementCheks1 = connection.createStatement();
+             Statement statementChecks0 = connection.createStatement();
+             Statement statementChecks1 = connection.createStatement();
              PreparedStatement statement = connection.prepareStatement(SQL_ORDER_UPDATE)) {
-            statementCheks0.executeQuery(SET_FOREIGN_KEY_CHECKS_0); // поместить в очередь?
+            statementChecks0.executeQuery(SET_FOREIGN_KEY_CHECKS_0); // поместить в очередь?
             statement.setInt(1, order.getUserId());
-            statement.setInt(2, order.getCoordinates());
+            statement.setLong(2, order.getCoordinates());
             statement.setString(3, order.getDestinationPoint());
             statement.setBigDecimal(4, order.getPrice());
             statement.setString(5, order.getComment());
             statement.setString(6, order.getCarClass().name());
             statement.setBoolean(7, order.isCompleted());
-            statement.setInt(8, order.getDestinationCoordinates());
+            statement.setLong(8, order.getDestinationCoordinates());
             statement.setInt(9, order.getDriverId());
+            statement.setBoolean(10, order.isStarted());
             statement.executeUpdate();
-            statementCheks0.executeQuery(SET_FOREIGN_KEY_CHECKS_1);
+            statementChecks0.executeQuery(SET_FOREIGN_KEY_CHECKS_1);
         }
         catch (SQLException e) {
             e.printStackTrace();
@@ -330,8 +334,23 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
     @Override
     public void delete(Integer id) {
         try (Connection connection = ConnectionPool.getInstance().getConnection();
+             Statement statementChecks0 = connection.createStatement();
+             Statement statementChecks1 = connection.createStatement();
              PreparedStatement statement = connection.prepareStatement(SQL_ORDER_DELETE_BY_ID)) {
+            statementChecks0.executeQuery(SET_FOREIGN_KEY_CHECKS_0); // поместить в очередь?
             statement.setInt(1, id);
+            statement.executeUpdate();
+            statementChecks1.executeQuery(SET_FOREIGN_KEY_CHECKS_1);
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteFromDriverList(Integer orderId){
+        try (Connection connection = ConnectionPool.getInstance().getConnection();
+             PreparedStatement statement = connection.prepareStatement(SQL_DRIVER_ORDER_LIST_DELETE_BY_ORDER_ID)) {
+            statement.setInt(1, orderId);
             statement.executeUpdate();
         }
         catch (SQLException e) {
@@ -339,10 +358,10 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
         }
     }
 
-    public void deleteFromDriverList(Integer id){
+    public void clearDriverOrderListExceptAccepted(Integer orderId){
         try (Connection connection = ConnectionPool.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_DRIVER_ORDER_LIST_DELETE_BY_ORDER_ID)) {
-            statement.setInt(1, id);
+             PreparedStatement statement = connection.prepareStatement(DELETE_FROM_DRIVER_ORDER_LIST_EXCEPT_ORDER_ID)) {
+            statement.setInt(1, orderId);
             statement.executeUpdate();
         }
         catch (SQLException e) {
@@ -350,3 +369,4 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
         }
     }
 }
+

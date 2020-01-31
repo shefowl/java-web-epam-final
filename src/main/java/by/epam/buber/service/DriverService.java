@@ -37,10 +37,12 @@ public class DriverService {
     public void acceptOrder(int orderId, int driverId){
         orderCrudRepository.setAccepted(driverId, orderId);
         userCrudRepository.setBusyById(driverId, true);
+        orderCrudRepository.clearDriverOrderListExceptAccepted(orderId);
     }
 
     public void completeOrder(int orderId, int driverId){
         orderCrudRepository.setCompleted(true, orderId);
         userCrudRepository.setBusyById(driverId, false);
+        orderCrudRepository.deleteFromDriverList(orderId);
     }
 }

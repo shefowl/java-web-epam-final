@@ -33,12 +33,12 @@ public class ApplicationController extends HttpServlet {
         String action = request.getParameter("action");
         switch (action == null ? "info" : action) {
             case "drivers":
-                List<Driver> drivers = userService.showAbleDrivers();
                 Order order = userService.takeCurrentOrder((Integer) session.getAttribute("userId"));
+                List<Driver> drivers = userService.showAbleDrivers(order.getCoordinates(), order.getCarClass());
                 request.setAttribute("currentOrder", order);
                 request.setAttribute("drivers", drivers);
-                request.setAttribute("prices", userService.computeOrderPricePerDriver(drivers, order));
-                request.setAttribute("acceptedOrder", userService.driverRequested(order.getId()));
+                request.setAttribute("prices", userService.calculateOrderPricePerDriver(drivers, order));
+                request.setAttribute("driverRequested", userService.driverRequested(order.getId()));
                 request.getRequestDispatcher("/ableDrivers.jsp").forward(request, response);
                 break;
             case "users":
@@ -54,6 +54,8 @@ public class ApplicationController extends HttpServlet {
                 request.getRequestDispatcher("/password.jsp").forward(request, response);
                 break;
             case "newOrder":
+                boolean ordered = userService.orderMade((Integer) session.getAttribute("userId"));
+                request.setAttribute("ordered", ordered);
                 request.getRequestDispatcher("/newOrder.jsp").forward(request, response);
                 break;
             case "orders":
@@ -62,7 +64,7 @@ public class ApplicationController extends HttpServlet {
             case "userOrder":
                 Order currentOrder = userService.takeCurrentOrder((Integer) session.getAttribute("userId"));
                 request.setAttribute("currentOrder", currentOrder);
-                request.setAttribute("acceptedOrder", userService.driverRequested(currentOrder.getId()));
+                request.setAttribute("driverRequested", userService.driverRequested(currentOrder.getId()));
                 request.getRequestDispatcher("/userOrder.jsp").forward(request, response);
                 break;
             default:
@@ -83,7 +85,8 @@ public class ApplicationController extends HttpServlet {
                         request.getParameter("address"),
                         request.getParameter("class"),
                         request.getParameter("comment"));
-                request.getRequestDispatcher("/ableDrivers.jsp").forward(request, response);
+                response.sendRedirect("app?action=drivers");
+                //request.getRequestDispatcher("/ableDrivers.jsp").forward(request, response);
             }
 
             if(action.equals("changeName")){

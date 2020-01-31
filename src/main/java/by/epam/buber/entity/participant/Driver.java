@@ -4,14 +4,13 @@ import by.epam.buber.entity.Car;
 import by.epam.buber.entity.Order;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class Driver extends TaxiParticipant {
     private Car car;
-    private int coordinates;
+    private long coordinates;
     private boolean active;
     private boolean busy;
     private BigDecimal pricePerKm;
@@ -77,11 +76,11 @@ public class Driver extends TaxiParticipant {
         this.car = new Car(car);
     }
 
-    public int getCoordinates() {
+    public long getCoordinates() {
         return coordinates;
     }
 
-    public void setCoordinates(int coordinates) {
+    public void setCoordinates(long coordinates) {
         this.coordinates = coordinates;
     }
 

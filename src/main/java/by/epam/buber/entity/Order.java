@@ -12,9 +12,9 @@ public class Order {
     private int id;
     private int userId;
     private int driverId;
-    private int coordinates;
+    private long coordinates;
     private String destinationPoint;
-    private int destinationCoordinates;
+    private long destinationCoordinates;
     private BigDecimal price;
     private String comment;
     private CarClass carClass;
@@ -45,17 +45,19 @@ public class Order {
         this.carClass = carClass;
     }
 
-    public Order(int userId, int coordinates, String destinationPoint, String comment, CarClass carClass,
-                 int destinationCoordinates) {
+    public Order(int userId, long coordinates, String destinationPoint, String comment, CarClass carClass,
+                 long destinationCoordinates) {
         this.userId = userId;
         this.coordinates = coordinates;
         this.destinationPoint = destinationPoint;
         this.comment = comment;
         this.carClass = carClass;
         this.destinationCoordinates = destinationCoordinates;
+        this.started = false;
+        this.completed = false;
     }
 
-    public Order(int id, int coordinates, String destinationPoint) {
+    public Order(int id, long coordinates, String destinationPoint) {
         this.id = id;
         this.coordinates = coordinates;
         this.destinationPoint = destinationPoint;
@@ -129,11 +131,11 @@ public class Order {
         this.driverId = driverId;
     }
 
-    public int getCoordinates() {
+    public long getCoordinates() {
         return coordinates;
     }
 
-    public void setCoordinates(int coordinates) {
+    public void setCoordinates(long coordinates) {
         this.coordinates = coordinates;
     }
 
@@ -145,11 +147,11 @@ public class Order {
         this.destinationPoint = destinationPoint;
     }
 
-    public int getDestinationCoordinates() {
+    public long getDestinationCoordinates() {
         return destinationCoordinates;
     }
 
-    public void setDestinationCoordinates(int destinationCoordinates) {
+    public void setDestinationCoordinates(long destinationCoordinates) {
         this.destinationCoordinates = destinationCoordinates;
     }
 

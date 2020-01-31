@@ -25,6 +25,8 @@
     <br>
     <td><a href="app?action=changePassword">Change password</a></td>
     <br>
+    <td><a href="driver?action=currentOrder">Current order</a></td>
+    <br>
     <td><a href="driver?action=logout">Log Out</a></td>
 </section>
 </body>

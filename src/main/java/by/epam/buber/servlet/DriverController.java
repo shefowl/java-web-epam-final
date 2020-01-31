@@ -51,11 +51,11 @@ public class DriverController extends HttpServlet {
             case "newOrder":
                 request.getRequestDispatcher("/newOrder.jsp").forward(request, response);
                 break;
-            case "driverCurrentOrder":
+            case "currentOrder":
                 Order currentOrder = driverService.takeCurrentOrder((Integer) session.getAttribute("userId"));
                 request.setAttribute("currentOrder", currentOrder);
                 //request.setAttribute("acceptedOrder", driverService.driverRequested(currentOrder.getId()));
-                request.getRequestDispatcher("/userOrder.jsp").forward(request, response);
+                request.getRequestDispatcher("/driverCurrentOrder.jsp").forward(request, response);
                 break;
             case "orders":
             case "info":
