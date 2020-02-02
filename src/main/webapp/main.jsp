@@ -9,19 +9,19 @@
 <html>
 <head>
     <title>Main page</title>
+    <style><%@include file="bootstrap-4.4.1-dist/css/bootstrap.min.css"%></style>
+    <style><%@include file="resources/css/cover.css"%></style>
+    <style><%@include file="resources/css/main.css"%></style>
 </head>
-<body>
-<section>
-    <h3>Main page</h3>
-    <td><a href="hello?action=update">New order</a></td>
-    <br>
-    <td><a href="hello?action=info">Show orders</a></td>
-    <br>
-    <td><a href="hello?action=login">Log In</a></td>
-    <br>
-    <td><a href="hello?action=userPage">User page</a></td>
-    <br>
-    <td><a href="hello?action=registration">Sign Up</a></td>
-</section>
+<nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
+    <a class="navbar-brand col-sm-3 col-md-2 mr-0">BUBER</a>
+    <nav class="nav-buber nav-masthead justify-content-center">
+        <a class="nav-link active" href="hello?action=main">Main page</a>
+        <a class="nav-link" href="hello?action=registration">Sign Up</a>
+        <a class="nav-link" href="hello?action=login">Sign In</a>
+    </nav>
+</nav>
+
+<body class="text-center">
 </body>
 </html>

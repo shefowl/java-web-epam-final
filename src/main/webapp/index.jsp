@@ -1,7 +1,13 @@
 <html>
+<head>
+    <style><%@include file="bootstrap-4.4.1-dist/css/bootstrap.min.css"%></style>
+    <style><%@include file="resources/css/signInForm.css"%></style>
+    <style><%@include file="resources/css/cover.css"%></style>
+</head>
 <body>
-<h2>BUBER</h2>
-<br>
-<a href="/taxibuber_war/hello">Go to YOUR taxi service!</a>
+<form method="get" action="" class="form-signin">
+<h1 class="text-center">BUBER</h1>
+<a href="/taxibuber_war/hello" class="btn btn-lg btn-outline-primary form-signin">Go to YOUR taxi service!</a>
+</form>
 </body>
 </html>

@@ -116,7 +116,7 @@ public class UserService {
         for (Driver driver: drivers){
             //long i = Math.abs(driver.getCoordinates() - destinationCoordinates);
             //boolean g = i > 35000000;
-            if(Math.abs(driver.getCoordinates() - destinationCoordinates) < 350000000){
+            if(Math.abs(driver.getCoordinates() - destinationCoordinates) < 400000000){
                 ableDrivers.add(driver);
             }
         }

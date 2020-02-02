@@ -22,13 +22,15 @@ public class LoginFilter implements Filter {
         HttpSession session = request.getSession(false);
         //URL Запроса/переадресации на Servlet входа
         String loginURI = request.getContextPath() + "/hello?action=login";
+        String mainURI = request.getContextPath() + "/hello?action=main";
         String indexURI = request.getContextPath() + "/";
         String helloURI = request.getContextPath() + "/hello";
         //Если сессия ранее создана
         boolean loggedIn = session != null && session.getAttribute("userName") != null
                 && session.getAttribute("userRole") != null;
         boolean loginRequest = request.getRequestURI().equals(helloURI);
-        String s =request.getParameter("action");
+        boolean mainRequest = request.getRequestURI().equals(helloURI);
+        String s = request.getRequestURI();
         if(request.getParameter("action") != null) {
             loginRequest = loginRequest && (request.getParameter("action").equals("signUp") ||
                     request.getParameter("action").equals("login") ||
@@ -37,7 +39,7 @@ public class LoginFilter implements Filter {
 
         //Если запрос пришел со страницы с входом или сессия не пуста даем добро следовать дальше
         //Если нет ридерект на страницу входа
-        if (loggedIn || loginRequest || request.getRequestURI().equals(indexURI)) {
+        if (loggedIn || loginRequest || request.getRequestURI().equals(indexURI)|| mainRequest) {
             filterChain.doFilter(request, response);
         } else {
             response.sendRedirect(loginURI);

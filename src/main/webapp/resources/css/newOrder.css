@@ -1,0 +1,76 @@
+html,
+body {
+    height: 100%;
+}
+
+body {
+    font-size: .875rem;
+    background-color: #333;
+}
+
+.form-order {
+    width: 100%;
+    max-width: 1300px;
+    padding: 40px;
+    margin: 0 auto;
+}
+.form-order .checkbox {
+    font-weight: 400;
+}
+.form-order .form-control {
+    width: 400px;
+    position: relative;
+    box-sizing: border-box;
+    height: auto;
+    padding: 10px;
+    font-size: 16px;
+}
+.form-order .form-control:focus {
+    z-index: 2;
+}
+.form-order .header-text-center {
+    margin-bottom: .5rem;
+    font-family: inherit;
+    font-weight: 900;
+    font-size: 40px;
+    line-height: 2;
+    text-align: center;
+    color: #1e7e34;
+}
+
+.form-order .text-center {
+    width: 100%;
+    white-space: nowrap;
+    display: inline;
+    max-width: 600px;
+    margin-bottom: .5rem;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: large;
+    line-height: 2;
+    text-align: center;
+    color: #ffc107;
+}
+
+.form-order input[type="address"] {
+    height: 90px;
+    margin-bottom: -5px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+.form-order input[type="comment"] {
+    height: 90px;
+    width: 400px;
+    margin-bottom: -5px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.form-order label[type="class"] {
+    height: 90px;
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    margin-left: auto;
+    margin-right: auto;
+}

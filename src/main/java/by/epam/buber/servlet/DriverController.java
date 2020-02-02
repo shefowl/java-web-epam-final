@@ -43,10 +43,10 @@ public class DriverController extends HttpServlet {
                 request.getRequestDispatcher("/userPage.jsp").forward(request, response);
                 break;
             case "changeName":
-                request.getRequestDispatcher("/account.jsp").forward(request, response);
+                request.getRequestDispatcher("/driverName.jsp").forward(request, response);
                 break;
             case "changePassword":
-                request.getRequestDispatcher("/password.jsp").forward(request, response);
+                request.getRequestDispatcher("/driverPassword.jsp").forward(request, response);
                 break;
             case "newOrder":
                 request.getRequestDispatcher("/newOrder.jsp").forward(request, response);

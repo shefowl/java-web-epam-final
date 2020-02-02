@@ -6,24 +6,37 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<!DOCTYPE html>
 <html>
 <head>
-    <title>Login</title>
+    <%--<link href="bootstrap-4.4.1-dist/css/bootstrap.min.css" rel="stylesheet">--%>
+    <%--<link href="resources/css/signIn.css" type="text/css" rel="stylesheet">--%>
+        <style><%@include file="bootstrap-4.4.1-dist/css/bootstrap.min.css"%></style>
+        <style><%@include file="resources/css/signInForm.css"%></style>
+        <style><%@include file="resources/css/cover.css"%></style>
+        <style><%@include file="resources/css/main.css"%></style>
 </head>
-<body>
-<section>
-    <%--<jsp:useBean id="taxiParticipant" scope="request" type="by.epam.buber.entity.TaxiParticipantParticipant"/>--%>
-    <form method="post" action="hello?action=login">
-        <dl>
-            <dt>Login: </dt>
-            <dd><input type="text" name="name"/></dd>
-        </dl>
-        <dl>
-            <dt>Password: </dt>
-            <dd><input type="password" name="password"/></dd>
-        </dl>
-        <button type="submit">Log In</button>
+<nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
+    <a class="navbar-brand col-sm-3 col-md-2 mr-0">BUBER</a>
+    <nav class="nav-buber nav-masthead justify-content-center">
+        <a class="nav-link" href="hello?action=main">Main page</a>
+        <a class="nav-link" href="hello?action=registration">Sign Up</a>
+        <a class="nav-link active" href="hello?action=login">Sign In</a>
+    </nav>
+</nav>
+<body class="text-center">
+<main role="main" class="inner cover">
+    <form method="post" action="hello?action=login" class="form-signin">
+        <h1 class="text-center">Please sign in</h1>
+
+        <label for="name" class="sr-only">Username</label>
+            <input type="text" name="name" id="name" class="form-control" placeholder="Username" required autofocus/>
+
+        <label for="password" class="sr-only">Password</label>
+            <input type="password" name="password" id="password" class="form-control" placeholder="Password" required/>
+
+        <button class="btn btn-lg btn-primary" type="submit">Sign in</button>
     </form>
-</section>
+</main>
 </body>
 </html>

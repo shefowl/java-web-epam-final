@@ -1,0 +1,142 @@
+html,
+body {
+    height: 100%;
+}
+
+body {
+    font-size: .875rem;
+    background-color: #333;
+}
+
+.tableDrivers {
+    display: table;
+    border-collapse: separate;
+    white-space: normal;
+    line-height: normal;
+    font-weight: normal;
+    font-size: medium;
+    font-style: normal;
+    text-align: start;
+    border-spacing: 2px;
+    border-color: grey;
+    font-variant: normal;
+    width: 1600px;
+    margin-bottom: 1rem;
+    color: #ffffff;
+    margin-left: 320px;
+}
+
+.table-condensed>thead>tr>th, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>tbody>tr>td, .table-condensed>tfoot>tr>td {
+    width: 1500px;
+    padding-left: 380px;
+}
+
+.ableDrivers .scope{
+    color: #ffc107;
+}
+
+.ableDrivers .row{
+    width: 100%;
+    white-space: nowrap;
+    display: inline;
+    max-width: 600px;
+    margin-bottom: .5rem;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 28px;
+    line-height: 2;
+    text-align: center;
+    color: #ffffff;
+}
+
+table.table{
+    border:1px #ffc107;
+    margin-top:20px;
+}
+table.table > thead > tr > th{
+    border:1px #ffc107;
+}
+table.table > tbody > tr > td{
+    border:1px #ffc107;
+}
+
+th {
+    color: white;
+}
+
+.current-order {
+    width: 100%;
+    max-width: 1300px;
+    padding: 40px;
+    margin: 0 auto;
+}
+.current-order .checkbox {
+    font-weight: 400;
+}
+.current-order .form-control {
+    width: 400px;
+    position: relative;
+    box-sizing: border-box;
+    height: auto;
+    padding: 10px;
+    font-size: 16px;
+}
+.current-order .form-control:focus {
+    z-index: 2;
+}
+.current-order .header-text-center-red {
+    margin-bottom: .5rem;
+    font-family: inherit;
+    font-weight: 900;
+    font-size: 40px;
+    line-height: 2;
+    text-align: center;
+    color: #c82333;
+}
+
+.current-order .header-text-center-green {
+    margin-bottom: .5rem;
+    font-family: inherit;
+    font-weight: 900;
+    font-size: 40px;
+    line-height: 2;
+    text-align: center;
+    color: #28a745;
+}
+
+.current-order .text-center {
+    width: 100%;
+    white-space: nowrap;
+    display: inline;
+    max-width: 600px;
+    margin-bottom: .5rem;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 28px;
+    line-height: 2;
+    text-align: center;
+    color: #ffffff;
+}
+
+.current-order input[type="address"] {
+    height: 90px;
+    margin-bottom: -5px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+.current-order input[type="comment"] {
+    height: 90px;
+    width: 400px;
+    margin-bottom: -5px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.current-order label[type="class"] {
+    height: 90px;
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    margin-left: auto;
+    margin-right: auto;
+}

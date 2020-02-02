@@ -1,17 +1,17 @@
 <%--
   Created by IntelliJ IDEA.
   User: Lesha
-  Date: 25.01.2020
-  Time: 18:36
+  Date: 03.02.2020
+  Time: 0:50
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
-    <title>User page</title>
+    <title>Change password</title>
     <style><%@include file="bootstrap-4.4.1-dist/css/bootstrap.min.css"%></style>
     <style><%@include file="resources/css/userPage.css"%></style>
+    <style><%@include file="resources/css/password.css"%></style>
 </head>
 <body>
 <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
@@ -22,7 +22,7 @@
     <div class="sidebar-sticky">
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link active" href="app?action=userPage">
+                <a class="nav-link" href="app?action=userPage">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
                     Dashboard <span class="sr-only">(current)</span>
                 </a>
@@ -46,7 +46,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="driver?action=changePassword">
+                <a class="nav-link active" href="driver?action=changePassword">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-settings"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
                     Change password
                 </a>
@@ -60,5 +60,22 @@
         </ul>
     </div>
 </nav>
+
+<main role="main" class="inner cover">
+    <form method="post" action="app?action=changePassword" class="form-password">
+        <h1 class="text-center">Change password</h1>
+
+        <label for="current" class="sr-only">Current</label>
+        <input type="password" name="current" id="current" class="form-control" placeholder="Current password" required autofocus/>
+
+        <label for="new" class="sr-only">New password</label>
+        <input type="password" name="new" id="new" class="form-control" placeholder="New password" required/>
+
+        <label for="repeatNew" class="sr-only">Repeat password</label>
+        <input type="password" name="repeatNew" id="repeatNew" class="form-control" placeholder="Repeat" required/>
+
+        <button class="btn btn-lg btn-primary" type="submit">Change Password</button>
+    </form>
+</main>
 </body>
 </html>
