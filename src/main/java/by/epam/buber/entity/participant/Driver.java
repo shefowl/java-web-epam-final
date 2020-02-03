@@ -64,7 +64,6 @@ public class Driver extends TaxiParticipant {
                 ", role=" + role +
                 ", email='" + email + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
-                ", currentOrder=" + currentOrder +
                 '}';
     }
 

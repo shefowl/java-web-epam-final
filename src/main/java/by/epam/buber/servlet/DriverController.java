@@ -2,6 +2,9 @@ package by.epam.buber.servlet;
 
 import by.epam.buber.entity.Order;
 import by.epam.buber.service.DriverService;
+import by.epam.buber.service.OrderService;
+import by.epam.buber.service.impl.DriverServiceImpl;
+import by.epam.buber.service.impl.OrderServiceImpl;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -15,7 +18,8 @@ import java.util.List;
 
 @WebServlet("/driver")
 public class DriverController extends HttpServlet {
-    private DriverService driverService = new DriverService();
+    private DriverService driverService = new DriverServiceImpl();
+    private OrderService orderService = new OrderServiceImpl();
 
 
     @Override
@@ -33,9 +37,9 @@ public class DriverController extends HttpServlet {
                 request.getRequestDispatcher("/newOrder.jsp").forward(request, response);
                 break;
             case "driverOrders":
-                List<Order> orders = driverService.seeOrders((Integer)session.getAttribute("userId"));
+                List<Order> orders = orderService.seeDriverOrders((Integer)session.getAttribute("userId"));
                 request.setAttribute("orderAccepted",
-                        driverService.acceptedOrder((Integer)session.getAttribute("userId")));
+                        orderService.acceptedOrder((Integer)session.getAttribute("userId")));
                 request.setAttribute("orders", orders);
                 request.getRequestDispatcher("/driverOrders.jsp").forward(request, response);
                 break;
@@ -51,8 +55,12 @@ public class DriverController extends HttpServlet {
             case "newOrder":
                 request.getRequestDispatcher("/newOrder.jsp").forward(request, response);
                 break;
+            case "busy":
+                request.setAttribute("busy", driverService.isBusy((Integer)session.getAttribute("userId")));
+                request.getRequestDispatcher("/driverBusy.jsp").forward(request, response);
+                break;
             case "currentOrder":
-                Order currentOrder = driverService.takeCurrentOrder((Integer) session.getAttribute("userId"));
+                Order currentOrder = orderService.takeCurrentOrderForDriver((Integer) session.getAttribute("userId"));
                 request.setAttribute("currentOrder", currentOrder);
                 //request.setAttribute("acceptedOrder", driverService.driverRequested(currentOrder.getId()));
                 request.getRequestDispatcher("/driverCurrentOrder.jsp").forward(request, response);
@@ -73,24 +81,30 @@ public class DriverController extends HttpServlet {
         String action = request.getParameter("action");
 
         if (action.equals("acceptOrder")) {
-            driverService.acceptOrder(Integer.valueOf(request.getParameter("acceptedOrder")),
+            orderService.acceptOrder(Integer.valueOf(request.getParameter("acceptedOrder")),
                     (Integer) session.getAttribute("userId"));
             request.getRequestDispatcher("/driverPage.jsp").forward(request, response);
         }
 
         if (action.equals("startTrip")) {
-            driverService.startTrip(Integer.valueOf(request.getParameter("startedOrder")));
+            orderService.startTrip(Integer.valueOf(request.getParameter("startedOrder")));
             request.getRequestDispatcher("/driverPage.jsp").forward(request, response);
         }
 
         if (action.equals("complete")) {
-            driverService.completeOrder(Integer.valueOf(request.getParameter("startedOrder")),
+            orderService.completeOrder(Integer.valueOf(request.getParameter("startedOrder")),
                     (Integer) session.getAttribute("userId"));
             request.getRequestDispatcher("/driverPage.jsp").forward(request, response);
         }
 
-        if(action.equals("driverPage")){
+        if(action.equals("busy")){
+            driverService.setBusy((Integer)session.getAttribute("userId"));
+            request.getRequestDispatcher("/driverBusy.jsp").forward(request, response);
+        }
 
+        if(action.equals("free")){
+            driverService.setFree((Integer)session.getAttribute("userId"));
+            request.getRequestDispatcher("/driverBusy.jsp").forward(request, response);
         }
 
     }

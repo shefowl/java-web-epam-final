@@ -4,6 +4,7 @@ import by.epam.buber.entity.Order;
 import by.epam.buber.entity.participant.Role;
 import by.epam.buber.entity.participant.TaxiParticipant;
 import by.epam.buber.service.UserService;
+import by.epam.buber.service.impl.UserServiceImpl;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -17,26 +18,23 @@ import java.io.IOException;
 @WebServlet("/hello")
 public class UserController extends HttpServlet {
 
-    private Order order;
-    private UserService userService = new UserService();
+    private UserService userService = new UserServiceImpl();
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init();
-        order = new Order(0, 0, "NONE");
     }
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession(true);
         String action = request.getParameter("action");
-        request.setAttribute("order", order);
         switch (action == null ? "info" : action) {
             case "save":
                 request.getRequestDispatcher("/app?action=save").forward(request, response);
                 break;
-            case "login":
-                request.getRequestDispatcher("/login.jsp").forward(request, response);
+            case "signIn":
+                request.getRequestDispatcher("/signIn.jsp").forward(request, response);
                 break;
             case "userPage":
                 request.getRequestDispatcher("/userPage.jsp").forward(request, response);
@@ -45,6 +43,9 @@ public class UserController extends HttpServlet {
                 request.getRequestDispatcher("/registration.jsp").forward(request, response);
                 break;
             case "logout":
+                if(session.getAttribute("userRole") == Role.DRIVER){
+                    userService.setDriverUnactive((Integer) session.getAttribute("userId"));
+                }
                 session.invalidate();
                 request.getRequestDispatcher("/index.jsp").forward(request, response);
                 break;
@@ -66,11 +67,11 @@ public class UserController extends HttpServlet {
         if(action.equals("signUp")){
             userService.signUp(request.getParameter("name"),request.getParameter("password"),
                     request.getParameter("email"), request.getParameter("phone"));
-            request.getRequestDispatcher("/login.jsp").forward(request, response);
+            request.getRequestDispatcher("/signIn.jsp").forward(request, response);
         }
 
-        if(action.equals("login")) {
-            TaxiParticipant taxiParticipant = userService.login(request.getParameter("name"),request.getParameter("password"));
+        if(action.equals("signIn")) {
+            TaxiParticipant taxiParticipant = userService.signIn(request.getParameter("name"),request.getParameter("password"));
             session.setAttribute("userName", taxiParticipant.getName());
             session.setAttribute("userRole", taxiParticipant.getRole());
             session.setAttribute("userId", taxiParticipant.getId());
@@ -79,7 +80,12 @@ public class UserController extends HttpServlet {
                 request.getRequestDispatcher("/userPage.jsp").forward(request, response);
             }
             else {
-                request.getRequestDispatcher("/driverPage.jsp").forward(request, response);
+                if(taxiParticipant.getRole() == Role.ADMIN) {
+                    request.getRequestDispatcher("/adminPage.jsp").forward(request, response);
+                }
+                else {
+                    request.getRequestDispatcher("/driverPage.jsp").forward(request, response);
+                }
             }
         }
 

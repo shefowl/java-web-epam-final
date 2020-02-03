@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OrderCrudRepositoryImpl implements OrderCrudRepository {
+
     public static final String SQL_ORDER_REQUEST = "SELECT  * FROM carOrder";
     public static final String SQL_ORDER_REQUEST_BY_ID = "SELECT  * FROM carOrder WHERE id=?";
     public static final String SQL_ORDER_REQUEST_BY_USER_ID = "SELECT  * FROM carOrder WHERE userId=?";
@@ -37,7 +38,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
 
 
     @Override
-    public List<Order> getOrdersByParticipantId(int id) {
+    public List<Order> getOrdersByParticipantId(Integer id) {
         List<Order> orders = new ArrayList<>();
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement  = connection.prepareStatement(SQL_ORDER_REQUEST_BY_ID)) {
@@ -73,7 +74,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
     }
 
     @Override
-    public Order getById(int id) {
+    public Order getById(Integer id) {
         Order order = null;
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement  = connection.prepareStatement(SQL_ORDER_REQUEST_BY_ID)) {
@@ -87,12 +88,13 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
         return order;
     }
 
-    public List<Order> getByUserId(int id) {
+    @Override
+    public List<Order> getByUserId(Integer userId) {
         Order order = null;
         List<Order> orders = new ArrayList<>();
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement  = connection.prepareStatement(SQL_ORDER_REQUEST_BY_USER_ID)) {
-            statement.setInt(1, id);
+            statement.setInt(1, userId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while(resultSet.next()) {
                     orders.add(convertFromResultSet(resultSet));
@@ -104,11 +106,12 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
         return orders;
     }
 
-    public Order getCurrentByUserId(int id) {
+    @Override
+    public Order getCurrentByUserId(Integer userId) {
         Order order = null;
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement  = connection.prepareStatement(SQL_ORDER_REQUEST_BY_USER_ID)) {
-            statement.setInt(1, id);
+            statement.setInt(1, userId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while(resultSet.next()){
                     if(!resultSet.getBoolean("completed")) {
@@ -122,12 +125,13 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
         return order;
     }
 
-    public List<Order> getCurrentOrdersByDriverId(int id) {
+    @Override
+    public List<Order> getCurrentOrdersByDriverId(Integer driverId) {
         Order order = null;
         List<Order> orders = new ArrayList<>();
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement  = connection.prepareStatement(SQL_ORDER_REQUEST_BY_DRIVER_ID)) {
-            statement.setInt(1, id);
+            statement.setInt(1, driverId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while(resultSet.next()) {
                     if(!resultSet.getBoolean("completed")) {
@@ -140,11 +144,13 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
         }
         return orders;
     }
-    public Order getCurrentByDriverId(int id) {
+
+    @Override
+    public Order getCurrentByDriverId(Integer driverId) {
         Order order = null;
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement  = connection.prepareStatement(SQL_ORDER_REQUEST_BY_DRIVER_ID)) {
-            statement.setInt(1, id);
+            statement.setInt(1, driverId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while(resultSet.next()){
                     if(!resultSet.getBoolean("completed")) {
@@ -158,11 +164,12 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
         return order;
     }
 
-    public boolean driverRequested(int id){
+    @Override
+    public boolean driverRequested(Integer driverId){
         boolean requested = false;
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement  = connection.prepareStatement(SQL_CHECK_DRIVER_REQUEST)) {
-            statement.setInt(1, id);
+            statement.setInt(1, driverId);
             try(ResultSet resultSet = statement.executeQuery()) {
                 requested = resultSet.next();
             }
@@ -172,13 +179,18 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
         return requested;
     }
 
-    public boolean driverAccepted(int id){
+    @Override
+    public boolean driverAccepted(Integer driverId){
         boolean requested = false;
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement  = connection.prepareStatement(SQL_CHECK_DRIVER_ACCEPT)) {
-            statement.setInt(1, id);
+            statement.setInt(1, driverId);
             try(ResultSet resultSet = statement.executeQuery()) {
-                requested = resultSet.next();
+                while (resultSet.next()) {
+                    if (!resultSet.getBoolean("completed")) {
+                        requested = resultSet.next();
+                    }
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -186,11 +198,12 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
         return requested;
     }
 
-    public void setStartedById(int id, boolean started) {
+    @Override
+    public void setStartedById(Integer orderId, boolean started) {
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_ORDER_UPDATE_STARTED_BY_ID)) {
             statement.setBoolean(1, started);
-            statement.setInt(2, id);
+            statement.setInt(2, orderId);
             statement.executeUpdate();
         }
         catch (SQLException e) {
@@ -198,11 +211,12 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
         }
     }
 
-    public boolean orderStarted(int id){
+    @Override
+    public boolean orderStarted(Integer orderId){
         boolean started = false;
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_ORDER_REQUEST_STARTED_BY_ID)) {
-            statement.setInt(1, id);
+            statement.setInt(1, orderId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if(resultSet.next()) {
                     started = resultSet.getBoolean("started");
@@ -215,13 +229,13 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
         return started;
     }
 
-
-    public List<Order> getCurrentFromDriverList(int id) {
+    @Override
+    public List<Order> getCurrentFromDriverList(Integer driveId) {
         Order order = null;
         List<Order> orders = new ArrayList<>();
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement  = connection.prepareStatement(SQL_ORDER_REQUEST_FROM_DRIVER_LIST)) {
-            statement.setInt(1, id);
+            statement.setInt(1, driveId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while(resultSet.next()) {
                         orders.add(convertFromResultSet(resultSet));
@@ -296,7 +310,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
     }
 
     @Override
-    public void setAccepted(int driverId, int orderId) {
+    public void setAccepted(Integer driverId, Integer orderId) {
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_ORDER_UPDATE_ACCEPTED_BY_ID)) {
             statement.setInt(1, driverId);
@@ -308,7 +322,8 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
         }
     }
 
-    public void setCompleted(boolean completed, int orderId) {
+    @Override
+    public void setCompleted(boolean completed, Integer orderId) {
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_ORDER_UPDATE_COMPLETED_BY_ID)) {
             statement.setBoolean(1, completed);
@@ -320,7 +335,8 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
         }
     }
 
-    public void setPrice(BigDecimal price, int orderId) {
+    @Override
+    public void setPrice(BigDecimal price, Integer orderId) {
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_ORDER_UPDATE_PRICE_BY_ID)) {
             statement.setBigDecimal(1, price);
@@ -348,6 +364,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
         }
     }
 
+    @Override
     public void deleteFromDriverList(Integer orderId){
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_DRIVER_ORDER_LIST_DELETE_BY_ORDER_ID)) {
@@ -358,7 +375,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
             e.printStackTrace();
         }
     }
-
+    @Override
     public void clearDriverOrderListExceptAccepted(Integer orderId){
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(DELETE_FROM_DRIVER_ORDER_LIST_EXCEPT_ORDER_ID)) {

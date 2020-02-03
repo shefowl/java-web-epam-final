@@ -18,7 +18,7 @@
     <nav class="nav-buber nav-masthead justify-content-center">
         <a class="nav-link active" href="hello?action=main">Main page</a>
         <a class="nav-link" href="hello?action=registration">Sign Up</a>
-        <a class="nav-link" href="hello?action=login">Sign In</a>
+        <a class="nav-link" href="hello?action=signIn">Sign In</a>
     </nav>
 </nav>
 

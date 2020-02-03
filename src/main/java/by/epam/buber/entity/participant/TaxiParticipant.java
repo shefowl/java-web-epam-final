@@ -11,7 +11,7 @@ public abstract class TaxiParticipant {
     protected Role role;
     protected String email;
     protected String phoneNumber;
-    protected Order currentOrder;
+    protected boolean banned;
 
     public TaxiParticipant() {
     }
@@ -23,7 +23,7 @@ public abstract class TaxiParticipant {
         this.role = participant.role;
         this.email = participant.email;
         this.phoneNumber = participant.phoneNumber;
-        this.currentOrder = participant.currentOrder;
+        this.banned = participant.banned;
     }
 
     public TaxiParticipant(String name, String password, String email, String phoneNumber) {
@@ -60,17 +60,17 @@ public abstract class TaxiParticipant {
         if (o == null || getClass() != o.getClass()) return false;
         TaxiParticipant that = (TaxiParticipant) o;
         return getId() == that.getId() &&
+                banned == that.banned &&
                 Objects.equals(getName(), that.getName()) &&
                 Objects.equals(getPassword(), that.getPassword()) &&
                 getRole() == that.getRole() &&
                 Objects.equals(getEmail(), that.getEmail()) &&
-                Objects.equals(getPhoneNumber(), that.getPhoneNumber()) &&
-                Objects.equals(getCurrentOrder(), that.getCurrentOrder());
+                Objects.equals(getPhoneNumber(), that.getPhoneNumber());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getPassword(), getRole(), getEmail(), getPhoneNumber(), getCurrentOrder());
+        return Objects.hash(getId(), getName(), getPassword(), getRole(), getEmail(), getPhoneNumber(), banned);
     }
 
     @Override
@@ -82,7 +82,7 @@ public abstract class TaxiParticipant {
                 ", role=" + role +
                 ", email='" + email + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
-                ", currentOrder=" + currentOrder +
+                ", banned=" + banned +
                 '}';
     }
 
@@ -134,11 +134,11 @@ public abstract class TaxiParticipant {
         this.phoneNumber = phoneNumber;
     }
 
-    public Order getCurrentOrder() {
-        return new Order(currentOrder);
+    public boolean isBanned() {
+        return banned;
     }
 
-    public void setCurrentOrder(Order currentOrder) {
-        this.currentOrder = new Order(currentOrder);
+    public void setBanned(boolean banned) {
+        this.banned = banned;
     }
 }

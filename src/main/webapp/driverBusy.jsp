@@ -1,18 +1,25 @@
 <%--
   Created by IntelliJ IDEA.
   User: Lesha
-  Date: 27.01.2020
-  Time: 18:22
+  Date: 03.02.2020
+  Time: 15:21
+  To change this template use File | Settings | File Templates.
+--%>
+<%--
+  Created by IntelliJ IDEA.
+  User: Lesha
+  Date: 25.01.2020
+  Time: 18:36
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
-    <title>Driver page</title>
+    <title>User page</title>
     <style><%@include file="bootstrap-4.4.1-dist/css/bootstrap.min.css"%></style>
     <style><%@include file="resources/css/userPage.css"%></style>
-    <style><%@include file="resources/css/ableDrivers.css"%></style>
+    <style><%@include file="resources/css/buttonCenter.css"%></style>
 </head>
 <body>
 <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
@@ -29,13 +36,13 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link active" href="driver?action=driverOrders">
+                <a class="nav-link" href="driver?action=driverOrders">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
                     Show orders
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="driver?action=busy">
+                <a class="nav-link active" href="driver?action=busy">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
                     Busy/Free
                 </a>
@@ -66,54 +73,17 @@
             </li>
         </ul>
     </div>
-</nav>
-        <jsp:useBean id="orders" scope="request" type="java.util.List"/>
-        <jsp:useBean id="orderAccepted" scope="request" type="java.lang.Boolean"/>
-    <%--<jsp:useBean id ="driver" class="by.epam.buber.entity.participant.Driver" scope="request"/>--%>
-        <c:if test="${!orderAccepted}">
-            <div class="container">
-                <table class="table">
-                    <thead>
-                    <tr class="ableDrivers">
-                        <th scope="col" class="scope">#</th>
-                        <th scope="col" class="scope">Coordinates</th>
-                        <th scope="col" class="scope">Address</th>
-                        <th scope="col" class="scope">Comment</th>
-                        <th scope="col" class="scope">Accept</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <c:forEach items="${orders}" var="currentOrder" varStatus="status">
-                        <tr>
-                            <th scope="row">${[status.index]}</th>
-                            <form method="post" action="driver?action=acceptOrder" class="ableDrivers">
-                                    <%--<div class="col">--%>
-                                <th>
-                                    <div class="ableDrivers row">
-                                        <c:out value="${currentOrder.coordinates}" />
-                                    </div>
-                                </th>
-                                <th>
-                                    <div class="row">
-                                        <c:out value="${currentOrder.destinationPoint}" />
-                                    </div>
-                                </th>
-                                <th>
-                                    <div class="row">
-                                        <c:out value="${currentOrder.comment}"/>
-                                    </div>
-                                </th>
-                                    <%--</div>--%>
-                                <td>
-                                    <button class="btn btn-lg btn-success" type="submit">Accept</button>
-                                </td>
-                                <input type="hidden" value="${currentOrder.id}"  name="acceptedOrder"/>
-                            </form>
-                        </tr>
-                    </c:forEach>
-                    </tbody>
-                </table>
-            </div>
+
+    <jsp:useBean id="busy" scope="request" type="java.lang.Boolean"/>
+    <c:if test="${busy}">
+    <form method="post" action="driver?action=free">
+            <button class="btn btn-lg btn-success" type="submit">I'm free now</button>
         </c:if>
+
+        <c:if test="${!busy}">
+        <form method="post" action="driver?action=busy">
+                <button class="btn btn-lg btn-success" type="submit">I'm busy now</button>
+            </c:if>
+</nav>
 </body>
 </html>

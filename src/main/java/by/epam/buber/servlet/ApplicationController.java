@@ -2,7 +2,10 @@ package by.epam.buber.servlet;
 
 import by.epam.buber.entity.Order;
 import by.epam.buber.entity.participant.Driver;
+import by.epam.buber.service.OrderService;
 import by.epam.buber.service.UserService;
+import by.epam.buber.service.impl.OrderServiceImpl;
+import by.epam.buber.service.impl.UserServiceImpl;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -18,7 +21,8 @@ import java.util.List;
 @WebServlet("/app")
 public class ApplicationController extends HttpServlet {
 
-    private UserService userService = new UserService();
+    private UserService userService = new UserServiceImpl();
+    private OrderService orderService = new OrderServiceImpl();
 
 
     @Override
@@ -33,11 +37,11 @@ public class ApplicationController extends HttpServlet {
         String action = request.getParameter("action");
         switch (action == null ? "info" : action) {
             case "drivers":
-                Order order = userService.takeCurrentOrder((Integer) session.getAttribute("userId"));
+                Order order = orderService.takeCurrentOrderForUser((Integer) session.getAttribute("userId"));
                 List<Driver> drivers = userService.showAbleDrivers(order.getCoordinates(), order.getCarClass());
                 request.setAttribute("currentOrder", order);
                 request.setAttribute("drivers", drivers);
-                request.setAttribute("prices", userService.calculateOrderPricePerDriver(drivers, order));
+                request.setAttribute("prices", orderService.calculateOrderPricePerDriver(drivers, order));
                 request.setAttribute("driverRequested", userService.driverRequested(order.getId()));
                 request.getRequestDispatcher("/ableDrivers.jsp").forward(request, response);
                 break;
@@ -54,7 +58,7 @@ public class ApplicationController extends HttpServlet {
                 request.getRequestDispatcher("/password.jsp").forward(request, response);
                 break;
             case "newOrder":
-                boolean ordered = userService.orderMade((Integer) session.getAttribute("userId"));
+                boolean ordered = orderService.orderMade((Integer) session.getAttribute("userId"));
                 request.setAttribute("ordered", ordered);
                 request.getRequestDispatcher("/newOrder.jsp").forward(request, response);
                 break;
@@ -62,7 +66,7 @@ public class ApplicationController extends HttpServlet {
                 request.getRequestDispatcher("/orders.jsp").forward(request, response);
                 break;
             case "userOrder":
-                Order currentOrder = userService.takeCurrentOrder((Integer) session.getAttribute("userId"));
+                Order currentOrder = orderService.takeCurrentOrderForUser((Integer) session.getAttribute("userId"));
                 request.setAttribute("currentOrder", currentOrder);
                 request.setAttribute("driverRequested", userService.driverRequested(currentOrder.getId()));
                 request.getRequestDispatcher("/userOrder.jsp").forward(request, response);
@@ -81,7 +85,7 @@ public class ApplicationController extends HttpServlet {
             String action = request.getParameter("action");
 
             if ("newOrder".equals(action)) {
-                Order order = userService.makeOrder((Integer) session.getAttribute("userId"),
+                Order order = orderService.makeOrder((Integer) session.getAttribute("userId"),
                         request.getParameter("address"),
                         request.getParameter("class"),
                         request.getParameter("comment"));
@@ -100,7 +104,7 @@ public class ApplicationController extends HttpServlet {
             if(action.equals("drivers")){
                  userService.sendDriverRequest(Integer.valueOf(request.getParameter("acceptedDriver")),
                          (Integer)session.getAttribute("userId"));
-                 userService.setOrderPrice(BigDecimal.valueOf(Double.valueOf(request.getParameter("orderPrice"))),
+                orderService.setOrderPrice(BigDecimal.valueOf(Double.valueOf(request.getParameter("orderPrice"))),
                          Integer.valueOf(request.getParameter("orderId")));
                 request.getRequestDispatcher("/userPage.jsp").forward(request, response);
             }
@@ -113,7 +117,7 @@ public class ApplicationController extends HttpServlet {
             }
 
             if(action.equals("cancelOrder")){
-                userService.cancelOrder(Integer.valueOf(request.getParameter("canceledOrder")));
+                orderService.cancelOrder(Integer.valueOf(request.getParameter("canceledOrder")));
                 response.sendRedirect("app?action=userOrder");
             }
 

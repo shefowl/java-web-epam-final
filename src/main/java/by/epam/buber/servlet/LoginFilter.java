@@ -21,7 +21,7 @@ public class LoginFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         HttpSession session = request.getSession(false);
         //URL Запроса/переадресации на Servlet входа
-        String loginURI = request.getContextPath() + "/hello?action=login";
+        String loginURI = request.getContextPath() + "/hello?action=signIn";
         String mainURI = request.getContextPath() + "/hello?action=main";
         String indexURI = request.getContextPath() + "/";
         String helloURI = request.getContextPath() + "/hello";
@@ -33,7 +33,7 @@ public class LoginFilter implements Filter {
         String s = request.getRequestURI();
         if(request.getParameter("action") != null) {
             loginRequest = loginRequest && (request.getParameter("action").equals("signUp") ||
-                    request.getParameter("action").equals("login") ||
+                    request.getParameter("action").equals("signIn") ||
                     request.getParameter("action").equals("registration"));
         }
 
