@@ -3,6 +3,7 @@ package by.epam.buber.repository.impl;
 import by.epam.buber.entity.CarClass;
 import by.epam.buber.entity.Order;
 import by.epam.buber.repository.OrderCrudRepository;
+import by.epam.buber.repository.impl.util.ResultSetConverter;
 import by.epam.buber.repository.pool.ConnectionPool;
 
 import java.math.BigDecimal;
@@ -11,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OrderCrudRepositoryImpl implements OrderCrudRepository {
+
+    private ResultSetConverter converter = ResultSetConverter.getInstance();
 
     public static final String SQL_ORDER_REQUEST = "SELECT  * FROM carOrder";
     public static final String SQL_ORDER_REQUEST_BY_ID = "SELECT  * FROM carOrder WHERE id=?";
@@ -46,7 +49,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
             try (ResultSet resultSet = statement.executeQuery()) {
                 Order order;
                 while (resultSet.next()) {
-                    order = convertFromResultSet(resultSet);
+                    order = converter.convertOrderFromResultSet(resultSet);
                     orders.add(order);
                 }
             }
@@ -64,7 +67,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
              ResultSet resultSet = statement.executeQuery(SQL_ORDER_REQUEST)) {
             Order order;
             while(resultSet.next()) {
-                order = convertFromResultSet(resultSet);
+                order = converter.convertOrderFromResultSet(resultSet);
                 orders.add(order);
             }
         } catch (SQLException e) {
@@ -80,7 +83,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
              PreparedStatement statement  = connection.prepareStatement(SQL_ORDER_REQUEST_BY_ID)) {
             statement.setInt(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
-                order = convertFromResultSet(resultSet);
+                order = converter.convertOrderFromResultSet(resultSet);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -97,7 +100,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
             statement.setInt(1, userId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while(resultSet.next()) {
-                    orders.add(convertFromResultSet(resultSet));
+                    orders.add(converter.convertOrderFromResultSet(resultSet));
                 }
             }
         } catch (SQLException e) {
@@ -115,7 +118,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
             try (ResultSet resultSet = statement.executeQuery()) {
                 while(resultSet.next()){
                     if(!resultSet.getBoolean("completed")) {
-                        order = convertFromResultSet(resultSet);
+                        order = converter.convertOrderFromResultSet(resultSet);
                     }
                 }
             }
@@ -135,7 +138,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
             try (ResultSet resultSet = statement.executeQuery()) {
                 while(resultSet.next()) {
                     if(!resultSet.getBoolean("completed")) {
-                        orders.add(convertFromResultSet(resultSet));
+                        orders.add(converter.convertOrderFromResultSet(resultSet));
                     }
                 }
             }
@@ -154,7 +157,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
             try (ResultSet resultSet = statement.executeQuery()) {
                 while(resultSet.next()){
                     if(!resultSet.getBoolean("completed")) {
-                        order = convertFromResultSet(resultSet);
+                        order = converter.convertOrderFromResultSet(resultSet);
                     }
                 }
             }
@@ -238,7 +241,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
             statement.setInt(1, driveId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while(resultSet.next()) {
-                        orders.add(convertFromResultSet(resultSet));
+                        orders.add(converter.convertOrderFromResultSet(resultSet));
                 }
             }
         } catch (SQLException e) {
@@ -247,33 +250,10 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
         return orders;
     }
 
-
-    private Order convertFromResultSet(ResultSet resultSet){
-        Order order = new Order();
-        try {
-            order.setId(resultSet.getInt("id"));
-            order.setCoordinates(resultSet.getLong("coordinates"));
-            order.setDestinationPoint(resultSet.getString("destinationPoint"));
-            order.setDestinationCoordinates(resultSet.getLong("destinationCoordinates"));
-            order.setPrice(resultSet.getBigDecimal("price"));
-            order.setComment(resultSet.getString("orderComment"));
-            order.setCarClass(CarClass.valueOf(resultSet.getString("carClass")));
-            order.setCompleted(resultSet.getBoolean("completed"));
-            order.setUserId(resultSet.getInt("userId"));
-            order.setDriverId(resultSet.getInt("driverId"));
-            order.setStarted(resultSet.getBoolean("started"));
-        }
-        catch (SQLException e){
-            e.printStackTrace();
-        }
-        return order;
-    }
-
     @Override
     public void save(Integer id, Order order) { // вынести принятие в отдельный метод
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_ORDER_UPDATE_BY_ID)) {
-            //statement.setString(1, order.get());
             statement.setBigDecimal(1, order.getPrice());
             statement.setBoolean(2, order.isCompleted());
             statement.setInt(3, id);

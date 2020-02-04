@@ -6,22 +6,21 @@ import by.epam.buber.entity.participant.Driver;
 import by.epam.buber.entity.participant.Role;
 import by.epam.buber.entity.participant.TaxiParticipant;
 import by.epam.buber.entity.participant.User;
+import by.epam.buber.repository.DriverCrudRepository;
 import by.epam.buber.repository.OrderCrudRepository;
+import by.epam.buber.repository.RepositoryFactory;
 import by.epam.buber.repository.UserCrudRepository;
-import by.epam.buber.repository.impl.OrderCrudRepositoryImpl;
-import by.epam.buber.repository.impl.UserCrudRepositoryImpl;
 import by.epam.buber.service.UserService;
-import by.epam.buber.service.impl.util.CoordinatesGenerator;
 import by.epam.buber.service.impl.util.PasswordEncoder;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class UserServiceImpl implements UserService {
-    private UserCrudRepository userCrudRepository = new UserCrudRepositoryImpl();
-    private OrderCrudRepository orderCrudRepository = new OrderCrudRepositoryImpl();
+    private RepositoryFactory repositoryFactory = RepositoryFactory.getInstance();
+    private UserCrudRepository userCrudRepository = repositoryFactory.getUserCrudRepository();
+    private OrderCrudRepository orderCrudRepository = repositoryFactory.getOrderCrudRepository();
+    private DriverCrudRepository driverCrudRepository =repositoryFactory.getDriverCrudRepository();
     private PasswordEncoder passwordEncoder = new PasswordEncoder();
 
     @Override
@@ -32,7 +31,7 @@ public class UserServiceImpl implements UserService {
             if (!taxiParticipant.isBanned()) {
                 if (passwordEncoder.checkPassword(password, taxiParticipant.getPassword())) {
                     if (taxiParticipant.getRole() == Role.DRIVER) {
-                        userCrudRepository.setDriverActive(taxiParticipant.getId(), true);
+                        driverCrudRepository.setDriverActive(taxiParticipant.getId(), true);
                         // userCrudRepository.setDriverCoordinates(taxiParticipant.getId(), CoordinatesGenerator.generate()); // uncheсk foreign keys
                     }
                     return taxiParticipant;
@@ -46,7 +45,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void setDriverUnactive(int driverId) {
-        userCrudRepository.setDriverActive(driverId, false);
+        driverCrudRepository.setDriverActive(driverId, false);
     }
 
     @Override
@@ -90,7 +89,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void sendDriverRequest(int driverId, int userId) {
         Order order = orderCrudRepository.getCurrentByUserId(userId);
-        userCrudRepository.setOrderToDriver(order, driverId);
+        driverCrudRepository.setOrderToDriver(order, driverId);
     }
 
     @Override
@@ -100,7 +99,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<Driver> showAbleDrivers(long destinationCoordinates, CarClass carClass) {
-        List<Driver> drivers = userCrudRepository.getAbleDriversByCarClass(carClass);
+        List<Driver> drivers = driverCrudRepository.getAbleDriversByCarClass(carClass);
         List<Driver> ableDrivers = new ArrayList<>();
         for (Driver driver : drivers) {
             if (Math.abs(driver.getCoordinates() - destinationCoordinates) < 400000000) {

@@ -3,10 +3,10 @@ package by.epam.buber.service.impl;
 import by.epam.buber.entity.CarClass;
 import by.epam.buber.entity.Order;
 import by.epam.buber.entity.participant.Driver;
+import by.epam.buber.repository.DriverCrudRepository;
 import by.epam.buber.repository.OrderCrudRepository;
+import by.epam.buber.repository.RepositoryFactory;
 import by.epam.buber.repository.UserCrudRepository;
-import by.epam.buber.repository.impl.OrderCrudRepositoryImpl;
-import by.epam.buber.repository.impl.UserCrudRepositoryImpl;
 import by.epam.buber.service.OrderService;
 import by.epam.buber.service.impl.util.CoordinatesGenerator;
 
@@ -15,8 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OrderServiceImpl implements OrderService {
-    private OrderCrudRepository orderCrudRepository = new OrderCrudRepositoryImpl();
-    private UserCrudRepository userCrudRepository = new UserCrudRepositoryImpl();
+    private RepositoryFactory repositoryFactory = RepositoryFactory.getInstance();
+    private UserCrudRepository userCrudRepository = repositoryFactory.getUserCrudRepository();
+    private OrderCrudRepository orderCrudRepository = repositoryFactory.getOrderCrudRepository();
+    private DriverCrudRepository driverCrudRepository =repositoryFactory.getDriverCrudRepository();
 
     @Override
     public List<Order> seeDriverOrders(int driveId){
@@ -41,17 +43,17 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void acceptOrder(int orderId, int driverId){
         orderCrudRepository.setAccepted(driverId, orderId);
-        userCrudRepository.setBusyById(driverId, true);
+        driverCrudRepository.setBusyById(driverId, true);
         orderCrudRepository.clearDriverOrderListExceptAccepted(orderId);
     }
 
     @Override
     public void completeOrder(int orderId, int driverId){
         orderCrudRepository.setCompleted(true, orderId);
-        userCrudRepository.setBusyById(driverId, false);
+        driverCrudRepository.setBusyById(driverId, false);
         orderCrudRepository.deleteFromDriverList(orderId);
         Order order = orderCrudRepository.getById(orderId);
-        userCrudRepository.setDriverCoordinates(driverId, order.getDestinationCoordinates());
+        driverCrudRepository.setDriverCoordinates(driverId, order.getDestinationCoordinates());
         userCrudRepository.setDiscount(order.getUserId(), 0);
     }
 

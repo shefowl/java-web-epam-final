@@ -3,10 +3,10 @@ package by.epam.buber.service.impl;
 import by.epam.buber.entity.Order;
 import by.epam.buber.entity.participant.Driver;
 import by.epam.buber.entity.participant.TaxiParticipant;
+import by.epam.buber.repository.DriverCrudRepository;
 import by.epam.buber.repository.OrderCrudRepository;
+import by.epam.buber.repository.RepositoryFactory;
 import by.epam.buber.repository.UserCrudRepository;
-import by.epam.buber.repository.impl.OrderCrudRepositoryImpl;
-import by.epam.buber.repository.impl.UserCrudRepositoryImpl;
 import by.epam.buber.service.AdminService;
 import by.epam.buber.service.impl.util.CoordinatesGenerator;
 import by.epam.buber.service.impl.util.PasswordEncoder;
@@ -16,8 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AdminServiceImpl implements AdminService {
-    private UserCrudRepository userCrudRepository = new UserCrudRepositoryImpl();
-    private OrderCrudRepository orderCrudRepository = new OrderCrudRepositoryImpl();
+    private RepositoryFactory repositoryFactory = RepositoryFactory.getInstance();
+    private UserCrudRepository userCrudRepository = repositoryFactory.getUserCrudRepository();
+    private OrderCrudRepository orderCrudRepository = repositoryFactory.getOrderCrudRepository();
+    private DriverCrudRepository driverCrudRepository = repositoryFactory.getDriverCrudRepository();
     private PasswordEncoder passwordEncoder = new PasswordEncoder();
 
 
@@ -80,9 +82,6 @@ public class AdminServiceImpl implements AdminService {
     public void registrateDriver(Driver driver) {
         driver.setPassword(passwordEncoder.encode(driver.getPassword()));
         driver.setCoordinates(CoordinatesGenerator.generate());
-        userCrudRepository.save(driver);
-        int id = userCrudRepository.getByName(driver.getName()).getId();
-        driver.setId(id);
-        userCrudRepository.saveDriver(driver);
+        driverCrudRepository.save(driver);
     }
 }

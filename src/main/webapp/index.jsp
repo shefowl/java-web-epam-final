@@ -7,7 +7,7 @@
 <body>
 <form method="get" action="" class="form-signin">
 <h1 class="text-center">BUBER</h1>
-<a href="/taxibuber_war/hello" class="btn btn-lg btn-outline-primary form-signin">Go to YOUR taxi service!</a>
+<a href="/taxibuber_war/hello?action=main" class="btn btn-lg btn-outline-primary form-signin">Go to YOUR taxi service!</a>
 </form>
 </body>
 </html>
