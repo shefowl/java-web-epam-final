@@ -3,6 +3,8 @@ package by.epam.buber.service.impl;
 import by.epam.buber.entity.Order;
 import by.epam.buber.entity.participant.Driver;
 import by.epam.buber.entity.participant.TaxiParticipant;
+import by.epam.buber.exception.DaoException;
+import by.epam.buber.exception.ServiceException;
 import by.epam.buber.repository.DriverCrudRepository;
 import by.epam.buber.repository.OrderCrudRepository;
 import by.epam.buber.repository.RepositoryFactory;
@@ -24,22 +26,27 @@ public class AdminServiceImpl implements AdminService {
 
 
     @Override
-    public void ban(Integer participantId) {
-        userCrudRepository.ban(participantId,true);
+    public void ban(Integer participantId, boolean ban) throws ServiceException {
+        try {
+            userCrudRepository.ban(participantId, ban);
+        }
+        catch (DaoException e){
+            throw new ServiceException(e);
+        }
     }
 
     @Override
-    public void unban(Integer participantId) {
-        userCrudRepository.ban(participantId,false);
+    public List<TaxiParticipant> getAllParticipants() throws ServiceException{
+        try{
+            return userCrudRepository.getAll();
+        }
+        catch (DaoException e){
+            throw new ServiceException(e);
+        }
     }
 
     @Override
-    public List<TaxiParticipant> getAllParticipants(){
-        return userCrudRepository.getAll();
-    }
-
-    @Override
-    public List<TaxiParticipant> getUsersByName(String name) {
+    public List<TaxiParticipant> getUsersByName(String name) throws ServiceException {
         List<TaxiParticipant> participants = getAllParticipants();
         List<TaxiParticipant> participantsByName = new ArrayList<>();
         for (TaxiParticipant participant: participants){
@@ -51,37 +58,55 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public List<TaxiParticipant> getUsersForDiscount() {
-        List<TaxiParticipant> participants = getAllParticipants();
+    public List<TaxiParticipant> getUsersForDiscount() throws ServiceException {
         List<TaxiParticipant> participantsForDiscount = new ArrayList<>();
-        List<Order> orders;
-        for (TaxiParticipant participant: participants){
-            orders = orderCrudRepository.getByUserId(participant.getId());
-            BigDecimal price = new BigDecimal(0);
-            for (Order order: orders){
-                price = price.add(order.getPrice());
+
+        try {
+            List<TaxiParticipant> participants = getAllParticipants();
+            List<Order> orders;
+            for (TaxiParticipant participant : participants) {
+                orders = orderCrudRepository.getByUserId(participant.getId());
+                BigDecimal price = new BigDecimal(0);
+                for (Order order : orders) {
+                    price = price.add(order.getPrice());
+                }
+                if (price.doubleValue() > 1000) {
+                    participantsForDiscount.add(participant);
+                }
             }
-            if(price.doubleValue() > 1000) {
-                participantsForDiscount.add(participant);
-            }
+        }
+        catch (DaoException e){
+            throw new ServiceException(e);
         }
         return participantsForDiscount;
     }
 
     @Override
-    public void setDiscount(int userId, int discount) {
-        userCrudRepository.setDiscount(userId, discount);
+    public void setDiscount(int userId, int discount) throws ServiceException {
+        try {
+            userCrudRepository.setDiscount(userId, discount);
+        }catch (DaoException e){
+            throw new ServiceException(e);
+        }
     }
 
     @Override
-    public TaxiParticipant getParticipantById(Integer participantId) {
-        return userCrudRepository.getById(participantId);
+    public TaxiParticipant getParticipantById(Integer participantId) throws ServiceException {
+        try {
+            return userCrudRepository.getById(participantId);
+        }catch (DaoException e){
+            throw new ServiceException(e);
+        }
     }
 
     @Override
-    public void registrateDriver(Driver driver) {
-        driver.setPassword(passwordEncoder.encode(driver.getPassword()));
-        driver.setCoordinates(CoordinatesGenerator.generate());
-        driverCrudRepository.save(driver);
+    public void registrateDriver(Driver driver) throws ServiceException {
+        try {
+            driver.setPassword(passwordEncoder.encode(driver.getPassword()));
+            driver.setCoordinates(CoordinatesGenerator.generate());
+            driverCrudRepository.save(driver);
+        }catch (DaoException e){
+            throw new ServiceException(e);
+        }
     }
 }

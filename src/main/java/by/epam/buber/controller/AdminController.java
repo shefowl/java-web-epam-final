@@ -1,9 +1,8 @@
 package by.epam.buber.controller;
 
 import by.epam.buber.controller.util.CommandProvider;
-import by.epam.buber.service.AdminService;
-import by.epam.buber.service.ServiceFactory;
-import by.epam.buber.service.UserService;
+import by.epam.buber.exception.ControllerException;
+import by.epam.buber.exception.ServiceException;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -16,10 +15,9 @@ import java.io.IOException;
 
 @WebServlet("/admin")
 public class AdminController extends HttpServlet {
-    private ServiceFactory serviceFactory = ServiceFactory.getInstance();
-    private AdminService adminService = serviceFactory.getAdminService();
-    private UserService userService = serviceFactory.getUserService();
     private CommandProvider commandProvider = new CommandProvider();
+    private final String GET = "GET_";
+    private final String POST = "POST_";
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -28,17 +26,25 @@ public class AdminController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        try{
         HttpSession session = request.getSession(true);
         String action = request.getParameter("action");
-        commandProvider.getCommand("GET_" + action).execute(request, response);
+        commandProvider.getCommand(GET + action).execute(request, response);
+        }catch (ControllerException e){
+            e.printStackTrace();
+        }
     }
 
     @Override
     protected void doPost (HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        try{
         request.setCharacterEncoding("UTF-8");
         String action = request.getParameter("action");
-        commandProvider.getCommand("POST_" + action).execute(request, response);
+        commandProvider.getCommand(POST + action).execute(request, response);
+        }catch (ControllerException e){
+            e.printStackTrace();
+        }
     }
 
 }

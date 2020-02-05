@@ -2,6 +2,7 @@ package by.epam.buber.repository.impl;
 
 import by.epam.buber.entity.CarClass;
 import by.epam.buber.entity.Order;
+import by.epam.buber.exception.DaoException;
 import by.epam.buber.repository.OrderCrudRepository;
 import by.epam.buber.repository.impl.util.ResultSetConverter;
 import by.epam.buber.repository.pool.ConnectionPool;
@@ -41,7 +42,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
 
 
     @Override
-    public List<Order> getOrdersByParticipantId(Integer id) {
+    public List<Order> getOrdersByParticipantId(Integer id) throws DaoException {
         List<Order> orders = new ArrayList<>();
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement  = connection.prepareStatement(SQL_ORDER_REQUEST_BY_ID)) {
@@ -54,13 +55,13 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
         return orders;
     }
 
     @Override
-    public List<Order> getAll() {
+    public List<Order> getAll() throws DaoException {
         List<Order> orders = new ArrayList<>();
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              Statement statement = connection.createStatement();
@@ -71,13 +72,13 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
                 orders.add(order);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
         return orders;
     }
 
     @Override
-    public Order getById(Integer id) {
+    public Order getById(Integer id) throws DaoException {
         Order order = null;
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement  = connection.prepareStatement(SQL_ORDER_REQUEST_BY_ID)) {
@@ -86,13 +87,13 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
                 order = converter.convertOrderFromResultSet(resultSet);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
         return order;
     }
 
     @Override
-    public List<Order> getByUserId(Integer userId) {
+    public List<Order> getByUserId(Integer userId) throws DaoException {
         Order order = null;
         List<Order> orders = new ArrayList<>();
         try (Connection connection = ConnectionPool.getInstance().getConnection();
@@ -104,13 +105,13 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
         return orders;
     }
 
     @Override
-    public Order getCurrentByUserId(Integer userId) {
+    public Order getCurrentByUserId(Integer userId) throws DaoException {
         Order order = null;
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement  = connection.prepareStatement(SQL_ORDER_REQUEST_BY_USER_ID)) {
@@ -123,13 +124,13 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
         return order;
     }
 
     @Override
-    public List<Order> getCurrentOrdersByDriverId(Integer driverId) {
+    public List<Order> getCurrentOrdersByDriverId(Integer driverId) throws DaoException {
         Order order = null;
         List<Order> orders = new ArrayList<>();
         try (Connection connection = ConnectionPool.getInstance().getConnection();
@@ -143,13 +144,13 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
         return orders;
     }
 
     @Override
-    public Order getCurrentByDriverId(Integer driverId) {
+    public Order getCurrentByDriverId(Integer driverId) throws DaoException {
         Order order = null;
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement  = connection.prepareStatement(SQL_ORDER_REQUEST_BY_DRIVER_ID)) {
@@ -162,13 +163,13 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
         return order;
     }
 
     @Override
-    public boolean driverRequested(Integer driverId){
+    public boolean driverRequested(Integer driverId) throws DaoException{
         boolean requested = false;
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement  = connection.prepareStatement(SQL_CHECK_DRIVER_REQUEST)) {
@@ -177,13 +178,13 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
                 requested = resultSet.next();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
         return requested;
     }
 
     @Override
-    public boolean driverAccepted(Integer driverId){
+    public boolean driverAccepted(Integer driverId) throws DaoException{
         boolean requested = false;
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement  = connection.prepareStatement(SQL_CHECK_DRIVER_ACCEPT)) {
@@ -196,13 +197,13 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
         return requested;
     }
 
     @Override
-    public void setStartedById(Integer orderId, boolean started) {
+    public void setStartedById(Integer orderId, boolean started) throws DaoException {
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_ORDER_UPDATE_STARTED_BY_ID)) {
             statement.setBoolean(1, started);
@@ -210,12 +211,12 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
             statement.executeUpdate();
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
     }
 
     @Override
-    public boolean orderStarted(Integer orderId){
+    public boolean orderStarted(Integer orderId) throws DaoException{
         boolean started = false;
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_ORDER_REQUEST_STARTED_BY_ID)) {
@@ -227,13 +228,13 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
             }
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
         return started;
     }
 
     @Override
-    public List<Order> getCurrentFromDriverList(Integer driveId) {
+    public List<Order> getCurrentFromDriverList(Integer driveId) throws DaoException {
         Order order = null;
         List<Order> orders = new ArrayList<>();
         try (Connection connection = ConnectionPool.getInstance().getConnection();
@@ -245,13 +246,13 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
         return orders;
     }
 
     @Override
-    public void save(Integer id, Order order) { // вынести принятие в отдельный метод
+    public void save(Integer id, Order order) throws DaoException { // вынести принятие в отдельный метод
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_ORDER_UPDATE_BY_ID)) {
             statement.setBigDecimal(1, order.getPrice());
@@ -260,12 +261,12 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
             statement.executeUpdate();
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
     }
 
     @Override
-    public void save(Order order) {
+    public void save(Order order) throws DaoException {
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              Statement statementChecks0 = connection.createStatement();
              Statement statementChecks1 = connection.createStatement();
@@ -285,12 +286,12 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
             statementChecks0.executeQuery(SET_FOREIGN_KEY_CHECKS_1);
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
     }
 
     @Override
-    public void setAccepted(Integer driverId, Integer orderId) {
+    public void setAccepted(Integer driverId, Integer orderId) throws DaoException {
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_ORDER_UPDATE_ACCEPTED_BY_ID)) {
             statement.setInt(1, driverId);
@@ -298,12 +299,12 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
             statement.executeUpdate();
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
     }
 
     @Override
-    public void setCompleted(boolean completed, Integer orderId) {
+    public void setCompleted(boolean completed, Integer orderId) throws DaoException {
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_ORDER_UPDATE_COMPLETED_BY_ID)) {
             statement.setBoolean(1, completed);
@@ -311,12 +312,12 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
             statement.executeUpdate();
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
     }
 
     @Override
-    public void setPrice(BigDecimal price, Integer orderId) {
+    public void setPrice(BigDecimal price, Integer orderId) throws DaoException {
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_ORDER_UPDATE_PRICE_BY_ID)) {
             statement.setBigDecimal(1, price);
@@ -324,12 +325,12 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
             statement.executeUpdate();
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
     }
 
     @Override
-    public void delete(Integer id) {
+    public void delete(Integer id) throws DaoException {
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              Statement statementChecks0 = connection.createStatement();
              Statement statementChecks1 = connection.createStatement();
@@ -340,30 +341,30 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
             statementChecks1.executeQuery(SET_FOREIGN_KEY_CHECKS_1);
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
     }
 
     @Override
-    public void deleteFromDriverList(Integer orderId){
+    public void deleteFromDriverList(Integer orderId) throws DaoException{
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_DRIVER_ORDER_LIST_DELETE_BY_ORDER_ID)) {
             statement.setInt(1, orderId);
             statement.executeUpdate();
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
     }
     @Override
-    public void clearDriverOrderListExceptAccepted(Integer orderId){
+    public void clearDriverOrderListExceptAccepted(Integer orderId) throws DaoException{
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(DELETE_FROM_DRIVER_ORDER_LIST_EXCEPT_ORDER_ID)) {
             statement.setInt(1, orderId);
             statement.executeUpdate();
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
     }
 }

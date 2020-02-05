@@ -1,5 +1,7 @@
 package by.epam.buber.service.impl;
 
+import by.epam.buber.exception.DaoException;
+import by.epam.buber.exception.ServiceException;
 import by.epam.buber.repository.DriverCrudRepository;
 import by.epam.buber.repository.RepositoryFactory;
 import by.epam.buber.service.DriverService;
@@ -10,28 +12,48 @@ public class DriverServiceImpl implements DriverService {
 
 
     @Override
-    public void setBusy(int id){
-        driverCrudRepository.setBusyById(id, true);
+    public void setBusy(int id) throws ServiceException{
+        try {
+            driverCrudRepository.setBusyById(id, true);
+        }catch (DaoException e){
+            throw new ServiceException(e);
+        }
     }
 
     @Override
-    public void setFree(int id){
-        driverCrudRepository.setBusyById(id, false);
+    public void setFree(int id) throws ServiceException{
+        try {
+            driverCrudRepository.setBusyById(id, false);
+        }catch (DaoException e){
+            throw new ServiceException(e);
+        }
     }
 
     @Override
-    public void setActive(int id) {
-        driverCrudRepository.setDriverActive(id,true);
+    public void setActive(int id) throws ServiceException {
+        try {
+            driverCrudRepository.setDriverActive(id, true);
+        }catch (DaoException e){
+            throw new ServiceException(e);
+        }
     }
 
     @Override
-    public void setUnactive(int id) {
-        driverCrudRepository.setDriverActive(id,false);
+    public void setUnactive(int id) throws ServiceException {
+        try {
+            driverCrudRepository.setDriverActive(id, false);
+        }catch (DaoException e){
+            throw new ServiceException(e);
+        }
     }
 
     @Override
-    public boolean isBusy(int id) {
-        return driverCrudRepository.isDriverBusy(id);
+    public boolean isBusy(int id) throws ServiceException {
+        try {
+            return driverCrudRepository.isDriverBusy(id);
+        }catch (DaoException e){
+            throw new ServiceException(e);
+        }
     }
 
 }

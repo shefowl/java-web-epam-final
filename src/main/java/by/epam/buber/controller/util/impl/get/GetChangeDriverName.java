@@ -7,9 +7,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static by.epam.buber.controller.util.Pages.DRIVER_NAME;
+
 public class GetChangeDriverName implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("resources/page/driver/driverName.jsp").forward(request, response);
+        request.getRequestDispatcher(DRIVER_NAME).forward(request, response);
     }
 }

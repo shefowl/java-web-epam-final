@@ -2,6 +2,7 @@ package by.epam.buber.repository.impl;
 
 import by.epam.buber.entity.participant.Driver;
 import by.epam.buber.entity.participant.*;
+import by.epam.buber.exception.DaoException;
 import by.epam.buber.repository.UserCrudRepository;
 import by.epam.buber.repository.impl.util.ResultSetConverter;
 import by.epam.buber.repository.pool.ConnectionPool;
@@ -30,7 +31,7 @@ public class UserCrudRepositoryImpl implements UserCrudRepository {
 
 
     @Override
-    public List<TaxiParticipant> getAll(){
+    public List<TaxiParticipant> getAll() throws DaoException {
         List<TaxiParticipant> participants = new ArrayList<>();
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              Statement statement = connection.createStatement();
@@ -48,16 +49,20 @@ public class UserCrudRepositoryImpl implements UserCrudRepository {
                         participant = converter.convertParticipantFromResultSet(resultSet, new Admin());
                         participants.add(participant);
                     }
+                    else {
+                        participant = converter.convertParticipantFromResultSet(resultSet, new Driver());
+                        participants.add(participant);
+                    }
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
         return participants;
     }
 
     @Override
-    public TaxiParticipant getById(Integer id) {
+    public TaxiParticipant getById(Integer id) throws DaoException {
         TaxiParticipant participant;
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement  = connection.prepareStatement(SQL_USER_REQUEST_BY_ID)) {
@@ -79,13 +84,13 @@ public class UserCrudRepositoryImpl implements UserCrudRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
         return null;
     }
 
     @Override
-    public TaxiParticipant getByName(String name) {
+    public TaxiParticipant getByName(String name) throws DaoException {
         TaxiParticipant participant;
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement  = connection.prepareStatement(SQL_USER_REQUEST_BY_NAME)) {
@@ -101,17 +106,21 @@ public class UserCrudRepositoryImpl implements UserCrudRepository {
                             participant = converter.convertParticipantFromResultSet(resultSet, new Admin());
                             return participant;
                         }
-                    }
+                        else {
+                            participant = converter.convertParticipantFromResultSet(resultSet, new Driver());
+                            return participant;
+                        }
+                }
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
         return null;
     }
 
     @Override
-    public void setDiscount(Integer userId, int discount) {
+    public void setDiscount(Integer userId, int discount) throws DaoException {
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_USER_UPDATE_DISCOUNT_BY_ID)) {
             statement.setInt(1, discount);
@@ -119,11 +128,11 @@ public class UserCrudRepositoryImpl implements UserCrudRepository {
             statement.executeUpdate();
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
     }
 
-    private User joinUser(User user){
+    private User joinUser(User user) throws DaoException{
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement  = connection.prepareStatement(SQL_USER_JOIN_BY_ID)) {
             statement.setInt(1, user.getId());
@@ -133,37 +142,37 @@ public class UserCrudRepositoryImpl implements UserCrudRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
         return user;
     }
 
     @Override
-    public void ban(Integer participantId, boolean ban) {
+    public void ban(Integer participantId, boolean ban) throws DaoException {
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_USER_UPDATE_BANNED_BY_ID)) {
             converter.statementSetBooleanById(statement, ban, participantId);
             statement.executeUpdate();
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
     }
 
     @Override
-    public void save(TaxiParticipant user){
+    public void save(TaxiParticipant user) throws DaoException{
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_USER_UPDATE)) {
             converter.statementSetParticipant(statement, user);
             statement.executeUpdate();
         }
         catch (SQLException e) {
-                e.printStackTrace();
+            throw new DaoException(e);
         }
     }
 
     @Override
-    public void save(Integer id, TaxiParticipant user){
+    public void save(Integer id, TaxiParticipant user) throws DaoException{
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_USER_UPDATE_BY_ID)) {
             converter.statementSetParticipant(statement, user);
@@ -171,19 +180,19 @@ public class UserCrudRepositoryImpl implements UserCrudRepository {
             statement.executeUpdate();
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
     }
 
     @Override
-    public void delete(Integer id) {
+    public void delete(Integer id) throws DaoException {
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_USER_DELETE_BY_ID)) {
             statement.setInt(1, id);
             statement.executeUpdate();
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
     }
 }

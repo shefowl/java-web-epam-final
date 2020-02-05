@@ -1,13 +1,11 @@
 package by.epam.buber.service;
 
-import by.epam.buber.entity.Order;
-
-import java.util.List;
+import by.epam.buber.exception.ServiceException;
 
 public interface DriverService {
-    void setBusy(int id);
-    void setFree(int id);
-    boolean isBusy(int id);
-    void setActive(int id);
-    void setUnactive(int id);
+    void setBusy(int id) throws ServiceException;
+    void setFree(int id) throws ServiceException;
+    boolean isBusy(int id) throws ServiceException;
+    void setActive(int id) throws ServiceException;
+    void setUnactive(int id) throws ServiceException;
 }

@@ -7,9 +7,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static by.epam.buber.controller.util.Pages.USER_PAGE;
+
 public class GetUserPage implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("resources/page/user/userPage.jsp").forward(request, response);
+        request.getRequestDispatcher(USER_PAGE).forward(request, response);
     }
 }

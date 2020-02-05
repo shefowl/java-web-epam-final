@@ -26,10 +26,13 @@ public class CommandProvider {
         repository.put(CommandName.GET_NEW_ORDER, new GetNewOrder());
         repository.put(CommandName.GET_USER_ORDER, new GetUserOrder());
         repository.put(CommandName.GET_GET_ALL, new GetGetAll());
+        repository.put(CommandName.GET_GET_ALL_BY_NAME, new GetGetAllByName());
         repository.put(CommandName.GET_PARTICIPANT_ID, new GetParticipantId());
         repository.put(CommandName.GET_ADMIN_PAGE, new GetAdminPage());
         repository.put(CommandName.GET_DISCOUNT, new GetDiscount());
         repository.put(CommandName.GET_NEW_DRIVER, new GetNewDriver());
+        repository.put(CommandName.GET_PARTICIPANT_PAGE, new GetParticipantPage());
+        repository.put(CommandName.GET_CHANGE_ADMIN_PASSWORD, new GetChangeAdminPassword());
 
         repository.put(CommandName.POST_SIGN_IN, new PostSignIn());
         repository.put(CommandName.POST_SIGN_UP, new PostSignUp());
@@ -44,8 +47,8 @@ public class CommandProvider {
         repository.put(CommandName.POST_CHANGE_PASSWORD, new PostChangePassword());
         repository.put(CommandName.POST_CANCEL_ORDER, new PostCancelOrder());
         repository.put(CommandName.POST_BAN, new PostBan());
-        repository.put(CommandName.POST_FIND_BY_NAME, new PostFindByName());
-        repository.put(CommandName.POST_FIND_BY_ID, new PostFindById());
+        repository.put(CommandName.POST_FIND_BY_NAME, new PostFoundByName());
+        repository.put(CommandName.POST_FIND_BY_ID, new PostFoundById());
         repository.put(CommandName.POST_DISCOUNT, new PostDiscount());
         repository.put(CommandName.POST_NEW_DRIVER, new PostNewDriver());
     }

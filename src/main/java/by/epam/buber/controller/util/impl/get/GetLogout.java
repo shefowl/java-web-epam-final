@@ -2,6 +2,8 @@ package by.epam.buber.controller.util.impl.get;
 
 import by.epam.buber.controller.util.Command;
 import by.epam.buber.entity.participant.Role;
+import by.epam.buber.exception.ControllerException;
+import by.epam.buber.exception.ServiceException;
 import by.epam.buber.service.ServiceFactory;
 import by.epam.buber.service.UserService;
 
@@ -13,7 +15,9 @@ import java.io.IOException;
 
 public class GetLogout implements Command {
     @Override
-    public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void execute(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException, ControllerException {
+        try{
         ServiceFactory serviceFactory = ServiceFactory.getInstance();
         UserService userService = serviceFactory.getUserService();
         HttpSession session = request.getSession();
@@ -23,5 +27,8 @@ public class GetLogout implements Command {
         }
         session.invalidate();
         request.getRequestDispatcher("/index.jsp").forward(request, response);
+        }catch (ServiceException e){
+            throw new ControllerException(e);
+        }
     }
 }

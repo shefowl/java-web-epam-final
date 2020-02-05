@@ -3,6 +3,7 @@ package by.epam.buber.repository.impl;
 import by.epam.buber.entity.CarClass;
 import by.epam.buber.entity.Order;
 import by.epam.buber.entity.participant.Driver;
+import by.epam.buber.exception.DaoException;
 import by.epam.buber.repository.DriverCrudRepository;
 import by.epam.buber.repository.impl.util.ResultSetConverter;
 import by.epam.buber.repository.pool.ConnectionPool;
@@ -40,10 +41,12 @@ public class DriverCrudRepositoryImpl implements DriverCrudRepository {
             " SELECT * FROM (SELECT * FROM (SELECT * FROM (SELECT * FROM driver JOIN car ON " +
                     "participantId=driverId WHERE carClass=?) AS T WHERE active=1)" +
                     " AS D WHERE busy=0) AS P JOIN participant ON id=driverId;";
+    private final String SQL_DRIVER_UPDATE_COORDINATES_BY_ID = "SET FOREIGN_KEY_CHECKS=0; UPDATE driver SET" +
+            " coordinates=? WHERE participantId=?; SET FOREIGN_KEY_CHECKS=1";
 //    private final String SET_FOREIGN_KEY_CHECKS_0 = "SET FOREIGN_KEY_CHECKS = 0";
 //    private final String SET_FOREIGN_KEY_CHECKS_1 = "SET FOREIGN_KEY_CHECKS = 1";
 
-    public List<Driver> getAll(){
+    public List<Driver> getAll() throws DaoException{
         List<Driver> drivers = new ArrayList<>();
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              Statement statement = connection.createStatement();
@@ -54,13 +57,13 @@ public class DriverCrudRepositoryImpl implements DriverCrudRepository {
                 drivers.add(driver);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
         return drivers;
     }
 
     @Override
-    public Driver getById(Integer id) {
+    public Driver getById(Integer id) throws DaoException {
         Driver driver = null;
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_DRIVER_GET_BY_ID)) {
@@ -72,13 +75,13 @@ public class DriverCrudRepositoryImpl implements DriverCrudRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
         return driver;
     }
 
     @Override
-    public List<Driver> getAbleDriversByCarClass(CarClass carClass){
+    public List<Driver> getAbleDriversByCarClass(CarClass carClass) throws DaoException{
         List<Driver> drivers = new ArrayList<>();
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_DRIVER_GET_ABLE_BY_COORDINATES_AND_CAR_CLASS)) {
@@ -90,13 +93,13 @@ public class DriverCrudRepositoryImpl implements DriverCrudRepository {
                 drivers.add(driver);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
         return drivers;
     }
 
     @Override
-    public void setOrderToDriver(Order order, Integer id){
+    public void setOrderToDriver(Order order, Integer id) throws DaoException{
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_DRIVER_UPDATE_ORDERS)) {
             statement.setInt(1, order.getId());
@@ -104,37 +107,37 @@ public class DriverCrudRepositoryImpl implements DriverCrudRepository {
             statement.executeUpdate();
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
     }
 
     @Override
-    public void setDriverCoordinates(Integer driverId, long coordinates) {
+    public void setDriverCoordinates(Integer driverId, long coordinates) throws DaoException {
         try (Connection connection = ConnectionPool.getInstance().getConnection();
-             PreparedStatement statement = connection.prepareStatement(SQL_DRIVER_UPDATE_ORDERS)) {
+             PreparedStatement statement = connection.prepareStatement(SQL_DRIVER_UPDATE_COORDINATES_BY_ID)) {
             statement.setLong(1, coordinates);
             statement.setInt(2, driverId);
             statement.executeUpdate();
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
     }
 
     @Override
-    public void setBusyById(Integer id, boolean busy) {
+    public void setBusyById(Integer id, boolean busy) throws DaoException {
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_DRIVER_UPDATE_BUSY_BY_ID)) {
             converter.statementSetBooleanById(statement, busy, id);
             statement.executeUpdate();
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
     }
 
     @Override
-    public boolean isDriverBusy(Integer driverId){
+    public boolean isDriverBusy(Integer driverId) throws DaoException{
         boolean busy = false;
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement  = connection.prepareStatement(SQL_DRIVER_IS_BUSY_BY_ID)) {
@@ -146,25 +149,25 @@ public class DriverCrudRepositoryImpl implements DriverCrudRepository {
             }
         }
         catch (SQLException e){
-            e.printStackTrace();
+            throw new DaoException(e);
         }
         return busy;
     }
 
     @Override
-    public void setDriverActive(Integer driverId, boolean active) {
+    public void setDriverActive(Integer driverId, boolean active) throws DaoException {
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_DRIVER_UPDATE_ACTIVE_BY_ID)) {
             converter.statementSetBooleanById(statement, active, driverId);
             statement.executeUpdate();
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
     }
 
     @Override
-    public void save(Driver driver){
+    public void save(Driver driver) throws DaoException{
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_SAVE_DRIVER)) {
             converter.statementSetParticipant(statement, driver);
@@ -178,12 +181,12 @@ public class DriverCrudRepositoryImpl implements DriverCrudRepository {
             statement.executeUpdate();
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
     }
 
     @Override
-    public void save(Integer id, Driver driver){
+    public void save(Integer id, Driver driver) throws DaoException{
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_SAVE_DRIVER_BY_ID)) {
             statement.setInt(1,driver.getId());
@@ -204,19 +207,19 @@ public class DriverCrudRepositoryImpl implements DriverCrudRepository {
             statement.executeUpdate();
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
     }
 
     @Override
-    public void delete(Integer id) {
+    public void delete(Integer id) throws DaoException {
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              PreparedStatement statement = connection.prepareStatement(SQL_DRIVER_DELETE_BY_ID)) {
             statement.setInt(1, id);
             statement.executeUpdate();
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException(e);
         }
     }
 

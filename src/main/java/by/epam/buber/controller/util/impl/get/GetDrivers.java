@@ -3,6 +3,8 @@ package by.epam.buber.controller.util.impl.get;
 import by.epam.buber.controller.util.Command;
 import by.epam.buber.entity.Order;
 import by.epam.buber.entity.participant.Driver;
+import by.epam.buber.exception.ControllerException;
+import by.epam.buber.exception.ServiceException;
 import by.epam.buber.service.OrderService;
 import by.epam.buber.service.ServiceFactory;
 import by.epam.buber.service.UserService;
@@ -12,22 +14,35 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+
+import static by.epam.buber.controller.util.Pages.ABLE_DRIVERS;
 
 public class GetDrivers implements Command {
     @Override
-    public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void execute(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException, ControllerException {
+        try{
         ServiceFactory serviceFactory = ServiceFactory.getInstance();
         OrderService orderService = serviceFactory.getOrderService();
         UserService userService = serviceFactory.getUserService();
         HttpSession session = request.getSession();
-
         Order order = orderService.takeCurrentOrderForUser((Integer) session.getAttribute("userId"));
-        List<Driver> drivers = userService.showAbleDrivers(order.getCoordinates(), order.getCarClass());
-        request.setAttribute("currentOrder", order);
-        request.setAttribute("drivers", drivers);
-        request.setAttribute("prices", orderService.calculateOrderPricePerDriver(drivers, order));
-        request.setAttribute("driverRequested", userService.driverRequested(order.getId()));
-        request.getRequestDispatcher("resources/page/user/ableDrivers.jsp").forward(request, response);
+        if(order != null) {
+            List<Driver> drivers = userService.showAbleDrivers(order.getCoordinates(), order.getCarClass());
+            request.setAttribute("ordered", true);
+            request.setAttribute("drivers", drivers);
+            request.setAttribute("currentOrder", order);
+            request.setAttribute("prices", orderService.calculateOrderPricePerDriver(drivers, order));
+            request.setAttribute("driverRequested", userService.driverRequested(order.getId()));
+        }
+        else {
+            request.setAttribute("ordered", false);
+        }
+        request.getRequestDispatcher(ABLE_DRIVERS).forward(request, response);
+        }catch (ServiceException e){
+            throw new ControllerException(e);
+        }
     }
 }

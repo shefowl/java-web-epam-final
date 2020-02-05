@@ -7,9 +7,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static by.epam.buber.controller.util.Pages.MAIN;
+
 public class GetMain implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("resources/page/main/main.jsp").forward(request, response);
+        request.getRequestDispatcher(MAIN).forward(request, response);
     }
 }

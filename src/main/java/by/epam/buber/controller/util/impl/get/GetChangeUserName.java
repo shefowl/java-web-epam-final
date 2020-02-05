@@ -7,9 +7,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static by.epam.buber.controller.util.Pages.USER_NAME;
+
 public class GetChangeUserName implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("resources/page/user/account.jsp").forward(request, response);
+        request.getRequestDispatcher(USER_NAME).forward(request, response);
     }
 }

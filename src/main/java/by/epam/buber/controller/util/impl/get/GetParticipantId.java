@@ -7,9 +7,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static by.epam.buber.controller.util.Pages.ADMIN_ENTER_ID;
+
 public class GetParticipantId implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("resources/page/admin/adminEnterId.jsp").forward(request, response);
+        request.getRequestDispatcher(ADMIN_ENTER_ID).forward(request, response);
     }
 }

@@ -7,9 +7,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static by.epam.buber.controller.util.Pages.SIGN_UP;
+
 public class GetSignUp implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("resources/page/main/registration.jsp").forward(request, response);
+        request.setAttribute("exist", false);
+        request.getRequestDispatcher(SIGN_UP).forward(request, response);
     }
 }
