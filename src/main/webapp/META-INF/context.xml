@@ -7,7 +7,7 @@
     username="root"
     password="1234"
     driverClassName="com.mysql.cj.jdbc.Driver"
-    url="jdbc:mysql://127.0.0.1:3306/taxi?serverTimezone=UTC"
+    url="jdbc:mysql://127.0.0.1:3306/taxi?serverTimezone=UTC&amp;allowMultiQueries=true"
     validationQuery="select 1"
     maxActive="10"
     maxIdle="4"/>

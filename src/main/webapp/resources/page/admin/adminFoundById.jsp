@@ -74,10 +74,11 @@
     </div>
 </nav>
 
-<jsp:useBean id="participants" scope="request" type="java.util.List"/>
-<%--<jsp:useBean id="orderAccepted" scope="request" type="java.lang.Boolean"/>--%>
+<jsp:useBean id="found" scope="request" type="java.lang.Boolean"/>
 <%--<jsp:useBean id ="driver" class="by.epam.buber.entity.participant.Driver" scope="request"/>--%>
-<div class="container">
+<c:if test="${found}">
+    <jsp:useBean id="participants" scope="request" type="java.util.List"/>
+    <div class="container">
     <table class="table">
         <thead>
         <tr class="ableDrivers">
@@ -128,5 +129,11 @@
         </tbody>
     </table>
 </div>
+</c:if>
+<c:if test="${!found}">
+    <div class="current-order">
+        <h1 class="header-text-center-red">No results</h1>
+    </div>
+</c:if>
 </body>
 </html>

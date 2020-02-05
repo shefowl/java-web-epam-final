@@ -47,7 +47,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="driver?action=change_Drive_Name">
+                <a class="nav-link" href="driver?action=change_Driver_Name">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                     Change username
                 </a>
@@ -70,7 +70,9 @@
 
         <jsp:useBean id="orders" scope="request" type="java.util.List"/>
         <jsp:useBean id="orderAccepted" scope="request" type="java.lang.Boolean"/>
-    <%--<jsp:useBean id ="driver" class="by.epam.buber.entity.participant.Driver" scope="request"/>--%>
+        <jsp:useBean id="noOrders" scope="request" type="java.lang.Boolean"/>
+
+<c:if test="${!noOrders}">
         <c:if test="${!orderAccepted}">
             <div class="container">
                 <table class="table">
@@ -116,5 +118,11 @@
                 </table>
             </div>
         </c:if>
+</c:if>
+<c:if test="${noOrders}">
+    <div class="current-order">
+    <h1 class="header-text-center-red">No orders</h1>
+    </div>
+</c:if>
 </body>
 </html>

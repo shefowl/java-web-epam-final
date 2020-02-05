@@ -68,9 +68,12 @@
     </div>
 </nav>
 
-<jsp:useBean id="currentOrder" scope="request" type="by.epam.buber.entity.Order"/>
 <jsp:useBean id="driverRequested" scope="request" type="java.lang.Boolean"/>
+<jsp:useBean id="ordered" scope="request" type="java.lang.Boolean"/>
+
+<c:if test="${ordered}">
 <form method="post" action="app?action=cancel_Order" class="current-order">
+    <jsp:useBean id="currentOrder" scope="request" type="by.epam.buber.entity.Order"/>
     <div class="col">
         <div class="col-md-5 mb-3 text-center">
         Coordinates: <c:out value="${currentOrder.coordinates}" />
@@ -112,5 +115,11 @@
         </c:otherwise>
         </c:choose>
 </form>
+</c:if>
+<c:if test="${!ordered}">
+    <div class="current-order">
+    <h1 class="header-text-center-red">You have no active order</h1>
+    </div>
+</c:if>
 </body>
 </html>

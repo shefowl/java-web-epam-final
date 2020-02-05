@@ -41,12 +41,21 @@ body {
     z-index: 2;
 }
 .form-signin .text-center {
+     margin-bottom: .5rem;
+     font-family: inherit;
+     font-weight: 900;
+     line-height: 2;
+     text-align: center;
+     color: #ffc107;
+ }
+
+.form-signin .text-center-invalid {
     margin-bottom: .5rem;
     font-family: inherit;
-    font-weight: 900;
+    font-weight: 600;
     line-height: 2;
     text-align: center;
-    color: #ffc107;
+    color: #c82333;
 }
 
 .form-signin input[type="name"] {

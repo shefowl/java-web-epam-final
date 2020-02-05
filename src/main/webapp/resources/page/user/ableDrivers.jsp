@@ -68,10 +68,13 @@
     </div>
 </nav>
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
-        <jsp:useBean id="drivers" scope="request" type="java.util.List"/>
-        <jsp:useBean id="currentOrder" scope="request" type="by.epam.buber.entity.Order"/>
-        <jsp:useBean id="prices" scope="request" type="java.util.List"/>
-        <jsp:useBean id="driverRequested" scope="request" type="java.lang.Boolean"/>
+
+        <jsp:useBean id="ordered" scope="request" type="java.lang.Boolean"/>
+    <c:if test="${ordered}">
+    <jsp:useBean id="drivers" scope="request" type="java.util.List"/>
+    <jsp:useBean id="currentOrder" scope="request" type="by.epam.buber.entity.Order"/>
+    <jsp:useBean id="prices" scope="request" type="java.util.List"/>
+    <jsp:useBean id="driverRequested" scope="request" type="java.lang.Boolean"/>
     <c:if test="${currentOrder.driverId == '0' && !driverRequested}">
         <div class="container">
         <table class="table">
@@ -120,8 +123,17 @@
         </div>
 </main>
     </c:if>
-    <c:if test="${currentOrder.driverId != '0' || driverRequested}">
-        <p>Driver already has been requested</p>
-    </c:if>
+<c:if test="${currentOrder.driverId != '0' || driverRequested}">
+    <div class="current-order">
+        <h1 class="header-text-center-green">Driver already has been requested</h1>
+    </div>
+</c:if>
+</c:if>
+<c:if test="${!ordered}">
+    <div class="current-order">
+        <h1 class="header-text-center-red">You have no active order</h1>
+    </div>
+</c:if>
+
 </body>
 </html>
