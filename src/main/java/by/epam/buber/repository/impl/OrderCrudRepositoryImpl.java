@@ -6,6 +6,7 @@ import by.epam.buber.exception.DaoException;
 import by.epam.buber.repository.OrderCrudRepository;
 import by.epam.buber.repository.impl.util.ResultSetConverter;
 import by.epam.buber.repository.pool.ConnectionPool;
+import by.epam.buber.repository.pool.ConnectionPoolException;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -54,7 +55,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
                     orders.add(order);
                 }
             }
-        } catch (SQLException e) {
+        } catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
         return orders;
@@ -71,7 +72,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
                 order = converter.convertOrderFromResultSet(resultSet);
                 orders.add(order);
             }
-        } catch (SQLException e) {
+        } catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
         return orders;
@@ -86,7 +87,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
             try (ResultSet resultSet = statement.executeQuery()) {
                 order = converter.convertOrderFromResultSet(resultSet);
             }
-        } catch (SQLException e) {
+        } catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
         return order;
@@ -104,7 +105,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
                     orders.add(converter.convertOrderFromResultSet(resultSet));
                 }
             }
-        } catch (SQLException e) {
+        } catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
         return orders;
@@ -123,7 +124,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
                     }
                 }
             }
-        } catch (SQLException e) {
+        } catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
         return order;
@@ -143,7 +144,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
                     }
                 }
             }
-        } catch (SQLException e) {
+        } catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
         return orders;
@@ -162,7 +163,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
                     }
                 }
             }
-        } catch (SQLException e) {
+        } catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
         return order;
@@ -177,7 +178,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
             try(ResultSet resultSet = statement.executeQuery()) {
                 requested = resultSet.next();
             }
-        } catch (SQLException e) {
+        } catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
         return requested;
@@ -196,7 +197,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
                     }
                 }
             }
-        } catch (SQLException e) {
+        } catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
         return requested;
@@ -210,7 +211,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
             statement.setInt(2, orderId);
             statement.executeUpdate();
         }
-        catch (SQLException e) {
+        catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
     }
@@ -227,7 +228,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
                 }
             }
         }
-        catch (SQLException e) {
+        catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
         return started;
@@ -245,7 +246,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
                         orders.add(converter.convertOrderFromResultSet(resultSet));
                 }
             }
-        } catch (SQLException e) {
+        } catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
         return orders;
@@ -260,7 +261,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
             statement.setInt(3, id);
             statement.executeUpdate();
         }
-        catch (SQLException e) {
+        catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
     }
@@ -285,7 +286,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
             statement.executeUpdate();
             statementChecks0.executeQuery(SET_FOREIGN_KEY_CHECKS_1);
         }
-        catch (SQLException e) {
+        catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
     }
@@ -298,7 +299,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
             statement.setInt(2, orderId);
             statement.executeUpdate();
         }
-        catch (SQLException e) {
+        catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
     }
@@ -311,7 +312,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
             statement.setInt(2, orderId);
             statement.executeUpdate();
         }
-        catch (SQLException e) {
+        catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
     }
@@ -324,7 +325,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
             statement.setInt(2, orderId);
             statement.executeUpdate();
         }
-        catch (SQLException e) {
+        catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
     }
@@ -340,7 +341,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
             statement.executeUpdate();
             statementChecks1.executeQuery(SET_FOREIGN_KEY_CHECKS_1);
         }
-        catch (SQLException e) {
+        catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
     }
@@ -352,7 +353,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
             statement.setInt(1, orderId);
             statement.executeUpdate();
         }
-        catch (SQLException e) {
+        catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
     }
@@ -363,7 +364,7 @@ public class OrderCrudRepositoryImpl implements OrderCrudRepository {
             statement.setInt(1, orderId);
             statement.executeUpdate();
         }
-        catch (SQLException e) {
+        catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
     }

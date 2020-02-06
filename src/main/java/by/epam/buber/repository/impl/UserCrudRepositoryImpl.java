@@ -6,6 +6,7 @@ import by.epam.buber.exception.DaoException;
 import by.epam.buber.repository.UserCrudRepository;
 import by.epam.buber.repository.impl.util.ResultSetConverter;
 import by.epam.buber.repository.pool.ConnectionPool;
+import by.epam.buber.repository.pool.ConnectionPoolException;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.List;
 
 public class UserCrudRepositoryImpl implements UserCrudRepository {
 
+    //private static final ConnectionPool connectionPool = ConnectionPool.getInstance();
     private ResultSetConverter converter = ResultSetConverter.getInstance();
 
     public static final String SQL_USER_REQUEST = "SELECT  * FROM participant";
@@ -55,7 +57,7 @@ public class UserCrudRepositoryImpl implements UserCrudRepository {
                     }
                 }
             }
-        } catch (SQLException e) {
+        } catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
         return participants;
@@ -83,7 +85,7 @@ public class UserCrudRepositoryImpl implements UserCrudRepository {
                     }
                 }
             }
-        } catch (SQLException e) {
+        } catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
         return null;
@@ -113,7 +115,7 @@ public class UserCrudRepositoryImpl implements UserCrudRepository {
                 }
                 }
             }
-        } catch (SQLException e) {
+        } catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
         return null;
@@ -127,7 +129,7 @@ public class UserCrudRepositoryImpl implements UserCrudRepository {
             statement.setInt(2, userId);
             statement.executeUpdate();
         }
-        catch (SQLException e) {
+        catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
     }
@@ -141,7 +143,7 @@ public class UserCrudRepositoryImpl implements UserCrudRepository {
                     user.setDiscount(resultSet.getInt("discount"));
                 }
             }
-        } catch (SQLException e) {
+        } catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
         return user;
@@ -154,7 +156,7 @@ public class UserCrudRepositoryImpl implements UserCrudRepository {
             converter.statementSetBooleanById(statement, ban, participantId);
             statement.executeUpdate();
         }
-        catch (SQLException e) {
+        catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
     }
@@ -166,7 +168,7 @@ public class UserCrudRepositoryImpl implements UserCrudRepository {
             converter.statementSetParticipant(statement, user);
             statement.executeUpdate();
         }
-        catch (SQLException e) {
+        catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
     }
@@ -179,7 +181,7 @@ public class UserCrudRepositoryImpl implements UserCrudRepository {
             statement.setInt(6, id);
             statement.executeUpdate();
         }
-        catch (SQLException e) {
+        catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
     }
@@ -191,7 +193,7 @@ public class UserCrudRepositoryImpl implements UserCrudRepository {
             statement.setInt(1, id);
             statement.executeUpdate();
         }
-        catch (SQLException e) {
+        catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
     }

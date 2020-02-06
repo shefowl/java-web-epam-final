@@ -7,6 +7,9 @@ import by.epam.buber.exception.DaoException;
 import by.epam.buber.repository.DriverCrudRepository;
 import by.epam.buber.repository.impl.util.ResultSetConverter;
 import by.epam.buber.repository.pool.ConnectionPool;
+import by.epam.buber.repository.pool.ConnectionPoolException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -14,6 +17,7 @@ import java.util.List;
 
 public class DriverCrudRepositoryImpl implements DriverCrudRepository {
 
+    private final static Logger logger = LogManager.getLogger(DriverCrudRepositoryImpl.class);
     private ResultSetConverter converter = ResultSetConverter.getInstance();
 
     private final String SQL_SAVE_DRIVER = "INSERT INTO participant (name, password, role, email, phone) " +
@@ -56,7 +60,8 @@ public class DriverCrudRepositoryImpl implements DriverCrudRepository {
                 driver = converter.convertDriverFromResultSet(resultSet, driver);
                 drivers.add(driver);
             }
-        } catch (SQLException e) {
+        } catch (ConnectionPoolException | SQLException e) {
+            logger.error(e);
             throw new DaoException(e);
         }
         return drivers;
@@ -74,7 +79,7 @@ public class DriverCrudRepositoryImpl implements DriverCrudRepository {
                     //return driver;
                 }
             }
-        } catch (SQLException e) {
+        } catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
         return driver;
@@ -92,7 +97,7 @@ public class DriverCrudRepositoryImpl implements DriverCrudRepository {
                 driver = converter.convertDriverFromResultSet(resultSet, driver);
                 drivers.add(driver);
             }
-        } catch (SQLException e) {
+        } catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
         return drivers;
@@ -106,7 +111,7 @@ public class DriverCrudRepositoryImpl implements DriverCrudRepository {
             statement.setInt(2, id);
             statement.executeUpdate();
         }
-        catch (SQLException e) {
+        catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
     }
@@ -119,7 +124,7 @@ public class DriverCrudRepositoryImpl implements DriverCrudRepository {
             statement.setInt(2, driverId);
             statement.executeUpdate();
         }
-        catch (SQLException e) {
+        catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
     }
@@ -131,7 +136,7 @@ public class DriverCrudRepositoryImpl implements DriverCrudRepository {
             converter.statementSetBooleanById(statement, busy, id);
             statement.executeUpdate();
         }
-        catch (SQLException e) {
+        catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
     }
@@ -148,7 +153,7 @@ public class DriverCrudRepositoryImpl implements DriverCrudRepository {
                 }
             }
         }
-        catch (SQLException e){
+        catch (ConnectionPoolException | SQLException e){
             throw new DaoException(e);
         }
         return busy;
@@ -161,7 +166,7 @@ public class DriverCrudRepositoryImpl implements DriverCrudRepository {
             converter.statementSetBooleanById(statement, active, driverId);
             statement.executeUpdate();
         }
-        catch (SQLException e) {
+        catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
     }
@@ -180,7 +185,7 @@ public class DriverCrudRepositoryImpl implements DriverCrudRepository {
             statement.setString(12, driver.getCar().getCarClass().name());
             statement.executeUpdate();
         }
-        catch (SQLException e) {
+        catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
     }
@@ -206,7 +211,7 @@ public class DriverCrudRepositoryImpl implements DriverCrudRepository {
             statement.setString(15, driver.getCar().getCarClass().name());
             statement.executeUpdate();
         }
-        catch (SQLException e) {
+        catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
     }
@@ -218,7 +223,7 @@ public class DriverCrudRepositoryImpl implements DriverCrudRepository {
             statement.setInt(1, id);
             statement.executeUpdate();
         }
-        catch (SQLException e) {
+        catch (ConnectionPoolException | SQLException e) {
             throw new DaoException(e);
         }
     }
