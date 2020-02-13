@@ -1,0 +1,159 @@
+/*specification*/
+
+.body {
+	font-family: 'PT Sans', sans-serif;
+	background-color: #010101;
+}
+
+.background {
+	background-color: #010101;
+	width: 100vw;
+	height: 100vh;
+}
+
+ul, li {
+	display: block;
+	padding: 0;
+	margin: 0;
+}
+
+h1, h2, h3, h4, h5 {
+	font-weight: 700;
+	color: #fff;
+}
+
+h3 {
+	font-weight: 400;
+}
+
+/*the first view*/
+
+.header {
+	background-color: #010101;
+    background: linear-gradient(to top, #010101, #16dfdc);
+	color: #010101;
+	padding-top: 3vh;
+}
+
+.header .logo__name{
+	font-weight: 500;
+	font-size: 31px;
+	color: #16dfdc;
+}
+
+.features {
+	background-color: #010101;
+}
+
+.menu {
+	padding-top: 1vh;
+}
+
+.logo {
+	margin-bottom: 10%;
+}
+
+.menu__item {
+	margin: 0 5%;
+}
+
+.menu__item a {
+	font-family: 'Montserrat', sans-serif;
+	font-size: 15px;
+	font-weight: 700;
+	color: #16dfdc;
+}
+
+.menu__item p a {
+	color: white;
+}
+
+.menu__item a:hover {
+	text-decoration: none;
+	color: #fff;
+}
+
+.authorization {
+	margin-top: 5vh;
+	display: block;
+}
+
+.authorization .form__name {
+	font-family: 'Montserrat', sans-serif;
+	text-align: center;
+
+}
+
+.valid__message {
+	color: #8c0909;
+
+}
+
+.authorization h2 {
+	font-size: 25px;
+	color: #16dfdc;
+	margin-bottom: 1vh;
+}
+
+.info__fields {
+	display: block;
+	float: none;
+	padding-left: 15%;
+	padding-right: 15%;
+	border: 2px solid #16dfdc;
+	background-color: #367c80;
+	margin-bottom: 4vh;
+}
+
+.form__login {
+	margin-top: 10%;
+}
+
+.form__login input {
+	width: 230px;
+	height: 40px;
+}
+
+.form__login p{	
+transition: all 0.6s ease;
+}
+
+.field__uname:hover::after,
+.field__passw:hover::after,
+.field__mail:hover::after,
+.field__phone:hover::after
+ {
+	content: attr(data-title);
+	position: absolute;
+	left: 100%;
+	z-index: 1;
+	font-size: 11px;
+	color: #fff;
+	width: 150px;
+}
+
+.submit {
+	font-weight: 400;
+	width: auto;
+	min-width: 150px;
+	height: 40px;
+	border-radius: 5%;
+	margin-top: 1vh;
+	margin-bottom: 5vh;
+	/*margin-left: 16%;*/
+}
+
+.submit:hover {
+	color: #16dfdc;
+	font-weight: 500;
+}
+
+@media screen and (max-width: 992px) {
+	.logo__name {
+		margin: 42%;
+	}
+}
+
+
+
+
