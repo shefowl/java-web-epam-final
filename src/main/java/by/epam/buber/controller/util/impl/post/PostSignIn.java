@@ -1,6 +1,9 @@
 package by.epam.buber.controller.util.impl.post;
 
 import by.epam.buber.controller.util.Command;
+import by.epam.buber.controller.util.Page;
+import by.epam.buber.controller.util.RequestAttribute;
+import by.epam.buber.controller.util.SessionAttribute;
 import by.epam.buber.entity.participant.Role;
 import by.epam.buber.entity.participant.TaxiParticipant;
 import by.epam.buber.exception.ControllerException;
@@ -16,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-import static by.epam.buber.controller.util.Pages.*;
+import static by.epam.buber.controller.util.Page.*;
 
 public class PostSignIn implements Command {
     private static final Logger logger = LogManager.getLogger(PostSignIn.class);
@@ -29,43 +32,37 @@ public class PostSignIn implements Command {
         ServiceFactory serviceFactory = ServiceFactory.getInstance();
         UserService userService = serviceFactory.getUserService();
 
-        String n = request.getParameter("name");
-        String p = request.getParameter("password");
-
-            TaxiParticipant taxiParticipant = userService.signIn(request.getParameter("name"),
-                request.getParameter("password"));
+        TaxiParticipant taxiParticipant = userService.signIn(request.getParameter(RequestAttribute.NAME),
+                request.getParameter(RequestAttribute.PASSWORD));
         if(taxiParticipant != null) {
-                request.setAttribute("invalid", false);
+                request.setAttribute(RequestAttribute.INVALID, false);
             if(!taxiParticipant.isBanned()) {
-                session.setAttribute("userName", taxiParticipant.getName());
-                session.setAttribute("userRole", taxiParticipant.getRole());
-                session.setAttribute("userId", taxiParticipant.getId());
-                request.setAttribute("taxiParticipant", taxiParticipant);
+                session.setAttribute(SessionAttribute.USER_NAME_ATTRIBUTE, taxiParticipant.getName());
+                session.setAttribute(SessionAttribute.USER_ROLE_ATTRIBUTE, taxiParticipant.getRole());
+                session.setAttribute(SessionAttribute.USER_ID_ATTRIBUTE, taxiParticipant.getId());
+                //request.setAttribute("taxiParticipant", taxiParticipant);
                 if (taxiParticipant.getRole() == Role.USER) {
-                    //return "resources/page/user/userPage.jsp";
-                    request.getRequestDispatcher(USER_PAGE).forward(request, response);
+                    request.getRequestDispatcher(Page.USER_PAGE).forward(request, response);
                     logger.info("user signed in");
                 } else {
                     if (taxiParticipant.getRole() == Role.ADMIN) {
-                        //return "resources/page/admin/adminPage.jsp";
-                        request.getRequestDispatcher(ADMIN_PAGE).forward(request, response);
+                        request.getRequestDispatcher(Page.ADMIN_PAGE).forward(request, response);
                         logger.info("admin signed in");
                     } else {
-                        //return "resources/page/driver/driverPage.jsp";
-                        request.getRequestDispatcher(DRIVER_PAGE).forward(request, response);
+                        request.getRequestDispatcher(Page.DRIVER_PAGE).forward(request, response);
                         logger.info("driver signed in");
                     }
                 }
             }
             else {
-                request.setAttribute("banned", true);
+                request.setAttribute(RequestAttribute.BANNED, true);
                 request.getRequestDispatcher(SIGN_IN).forward(request, response);
             }
         }
         else {
-            request.setAttribute("invalid", true);
-            request.setAttribute("banned", false);
-            request.getRequestDispatcher(SIGN_IN).forward(request, response);
+            request.setAttribute(RequestAttribute.INVALID, true);
+            request.setAttribute(RequestAttribute.BANNED, false);
+            request.getRequestDispatcher(Page.SIGN_IN).forward(request, response);
         }
         }catch (ServiceException e){
             logger.error("error during sign in", e);

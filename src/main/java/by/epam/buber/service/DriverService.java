@@ -8,6 +8,4 @@ public interface DriverService {
     boolean isBusy(int id) throws ServiceException;
     void setActive(int id) throws ServiceException;
     void setUnactive(int id) throws ServiceException;
-    void setDriverUnactive(int driverId) throws ServiceException;
-
 }

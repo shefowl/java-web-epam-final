@@ -1,7 +1,5 @@
 package by.epam.buber.entity.participant;
 
-import by.epam.buber.entity.Order;
-
 import java.util.Objects;
 
 public abstract class TaxiParticipant {
@@ -24,34 +22,6 @@ public abstract class TaxiParticipant {
         this.email = participant.email;
         this.phoneNumber = participant.phoneNumber;
         this.banned = participant.banned;
-    }
-
-    public TaxiParticipant(String name, String password, String email, String phoneNumber) {
-        this.name = name;
-        this.password = password;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-    }
-
-    public TaxiParticipant(int id, String name, String password, Role role, String email, String phoneNumber) {
-        this.id = id;
-        this.name = name;
-        this.password = password;
-        this.role = role;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-    }
-
-    public TaxiParticipant(int id, String name, String password, Role role) {
-        this.id = id;
-        this.name = name;
-        this.password = password;
-        this.role = role;
-    }
-
-    public TaxiParticipant(String name, String password) {
-        this.name = name;
-        this.password = password;
     }
 
     @Override

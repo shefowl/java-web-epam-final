@@ -9,11 +9,6 @@ public class User extends TaxiParticipant {
         role = Role.USER;
     }
 
-    public User(String name, String password, String email, String phoneNumber) {
-        super(name, password, email, phoneNumber);
-        role = Role.USER;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -42,9 +37,6 @@ public class User extends TaxiParticipant {
                 '}';
     }
 
-    public User(String name, String password) {
-        super(name, password);
-    }
 
     public int getDiscount() {
         return discount;

@@ -6,6 +6,7 @@ import by.epam.buber.entity.Order;
 import by.epam.buber.entity.participant.Driver;
 import by.epam.buber.entity.participant.Role;
 import by.epam.buber.entity.participant.TaxiParticipant;
+import by.epam.buber.entity.participant.User;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -57,6 +58,17 @@ public class ResultSetConverter {
             e.printStackTrace();
         }
         return participant;
+    }
+
+    public User convertUserFromResultSet(ResultSet resultSet, User user){
+        try {
+            user = (User)convertParticipantFromResultSet(resultSet, user);
+            user.setDiscount(resultSet.getInt(UserField.DISCOUNT));
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
+        return user;
     }
 
     public Driver convertDriverFromResultSet(ResultSet resultSet, Driver driver){

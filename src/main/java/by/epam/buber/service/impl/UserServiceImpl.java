@@ -15,6 +15,7 @@ import by.epam.buber.repository.UserCrudRepository;
 import by.epam.buber.service.UserService;
 import by.epam.buber.service.impl.util.CoordinatesGenerator;
 import by.epam.buber.service.impl.util.PasswordEncoder;
+import by.epam.buber.service.impl.util.UserValidator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -29,6 +30,9 @@ public class UserServiceImpl implements UserService {
     private OrderCrudRepository orderCrudRepository = repositoryFactory.getOrderCrudRepository();
     private DriverCrudRepository driverCrudRepository =repositoryFactory.getDriverCrudRepository();
     private PasswordEncoder passwordEncoder = new PasswordEncoder();
+    private UserValidator validator = new UserValidator();
+
+    public static final int MIN_DISTANCE = 400000000;
 
     @Override
     public TaxiParticipant signIn(String name, String password) throws ServiceException {
@@ -62,10 +66,19 @@ public class UserServiceImpl implements UserService {
         try {
             User user = (User) userCrudRepository.getByName(name);
             if (user == null) {
-                String hashPassword = passwordEncoder.encode(password);
-                user = new User(name, hashPassword, email, phoneNumber);
-                userCrudRepository.save(user);
-                logger.info("User signed up");
+                if(validator.isValidUser(password, email, phoneNumber)) {
+                    String hashPassword = passwordEncoder.encode(password);
+                    user = new User();
+                    user.setName(name);
+                    user.setPassword(hashPassword);
+                    user.setEmail(email);
+                    user.setPhoneNumber(phoneNumber);
+                    userCrudRepository.save(user);
+                    logger.info("User signed up");
+                }
+                else {
+                    return null;
+                }
             }
             else {
                 return null;
@@ -76,6 +89,7 @@ public class UserServiceImpl implements UserService {
             throw new ServiceException(e);
         }
     }
+
 
     @Override
     public TaxiParticipant changeName(int id, String name) throws ServiceException {
@@ -103,6 +117,7 @@ public class UserServiceImpl implements UserService {
             TaxiParticipant taxiParticipant = userCrudRepository.getById(id);
             if (taxiParticipant != null) {
                 if (passwordEncoder.checkPassword(current, taxiParticipant.getPassword())) {
+                    if(validator.isValidPassword(newPassword))
                     if (newPassword.equals(repeatNewPassword)) {
                         String hashPassword = passwordEncoder.encode(newPassword);
                         taxiParticipant.setPassword(hashPassword);
@@ -147,7 +162,7 @@ public class UserServiceImpl implements UserService {
             List<Driver> drivers = driverCrudRepository.getAbleDriversByCarClass(carClass);
             List<Driver> ableDrivers = new ArrayList<>();
             for (Driver driver : drivers) {
-                if (Math.abs(driver.getCoordinates() - destinationCoordinates) < 400000000) {
+                if (Math.abs(driver.getCoordinates() - destinationCoordinates) < MIN_DISTANCE) {
                     ableDrivers.add(driver);
                 }
             }

@@ -23,13 +23,8 @@ public class DriverFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         HttpSession session = request.getSession(false);
         String userURI = request.getContextPath() + "/hello?action=main";
-        String css = "/css";
-        String img = "/img";
-        String js = "/js";
-        boolean resourcesRequest = request.getRequestURI().contains(css) || request.getRequestURI().contains(img) ||
-                request.getRequestURI().contains(js);
 
-        if(session.getAttribute("userRole") == Role.DRIVER || resourcesRequest) {
+        if(session.getAttribute("userRole") == Role.DRIVER) {
             filterChain.doFilter(request, response);
         }
         else{

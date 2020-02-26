@@ -1,6 +1,6 @@
 package by.epam.buber.controller.util.impl.post;
 
-import by.epam.buber.controller.util.Command;
+import by.epam.buber.controller.util.*;
 import by.epam.buber.entity.participant.TaxiParticipant;
 import by.epam.buber.exception.ControllerException;
 import by.epam.buber.exception.ServiceException;
@@ -15,9 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-import static by.epam.buber.controller.util.Pages.*;
-import static by.epam.buber.controller.util.PostFormRedirection.MAIN_REDIRECT;
-
 public class PostChangeName implements Command {
     private static final Logger logger = LogManager.getLogger(PostChangeName.class);
 
@@ -29,21 +26,20 @@ public class PostChangeName implements Command {
         ServiceFactory serviceFactory = ServiceFactory.getInstance();
         UserService userService = serviceFactory.getUserService();
 
-        TaxiParticipant participant = userService.changeName((Integer) session.getAttribute("userId"),
-                request.getParameter("name"));
+        TaxiParticipant participant = userService.changeName((Integer) session.getAttribute(SessionAttribute.USER_ID_ATTRIBUTE),
+                request.getParameter(RequestAttribute.NAME));
         if (participant != null) {
             String newName = participant.getName();
 
-            session.setAttribute("userName", newName);
-            response.sendRedirect(MAIN_REDIRECT);
+            session.setAttribute(SessionAttribute.USER_NAME_ATTRIBUTE, newName);
+            response.sendRedirect(Redirect.MAIN_REDIRECT);
         }
         else {
-            request.setAttribute("error", true);
-            request.getRequestDispatcher(USER_NAME).forward(request, response);
+            request.setAttribute(RequestAttribute.ERROR, true);
+            request.getRequestDispatcher(Page.USER_NAME).forward(request, response);
         }
-        //request.getRequestDispatcher(MAIN).forward(request, response);
         }catch (ServiceException e){
-            logger.error(e);
+            logger.error("error during command PostChangeName", e);
             throw new ControllerException(e);
         }
     }

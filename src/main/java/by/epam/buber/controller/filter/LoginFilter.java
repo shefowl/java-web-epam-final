@@ -20,7 +20,6 @@ public class LoginFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         HttpSession session = request.getSession(false);
-        //URL Запроса/переадресации на Servlet входа
         String signUp = request.getContextPath() + "/hello?action=sign_Up";
         String signIn = request.getContextPath() + "/hello?action=sign_In";
         String main = request.getContextPath() + "/hello?action=main";
@@ -29,9 +28,6 @@ public class LoginFilter implements Filter {
         String css = "/css";
         String img = "/img";
         String js = "/js";
-
-
-        //Если сессия ранее создана
 
         boolean loggedIn = session != null && session.getAttribute("userName") != null
                 && session.getAttribute("userRole") != null;
@@ -42,16 +38,6 @@ public class LoginFilter implements Filter {
         boolean resourcesRequest = request.getRequestURI().contains(css) || request.getRequestURI().contains(img) ||
                 request.getRequestURI().contains(js);
 
-        //String s = request.getContextPath();
-        //String ss = request.getRequestURI();
-//        if(request.getParameter("action") != null) {
-//            loginRequest = loginRequest && (request.getParameter("action").equals("signUp") ||
-//                    request.getParameter("action").equals("signIn") ||
-//                    request.getParameter("action").equals("registration"));
-//        }
-
-        //Если запрос пришел со страницы с входом или сессия не пуста даем добро следовать дальше
-        //Если нет ридерект на страницу входа
         if (loggedIn || mainRequest || request.getRequestURI().equals(index)|| signInRequest || signUpRequest ||
                 helloRequest || resourcesRequest) {
             filterChain.doFilter(request, response);

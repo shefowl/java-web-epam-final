@@ -226,7 +226,7 @@ public class OrderCrudRepositoryImpl extends AbstractRepository implements Order
             try(ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {
                     if (!resultSet.getBoolean("completed")) {
-                        requested = resultSet.next();
+                        requested = true;
                     }
                 }
             }

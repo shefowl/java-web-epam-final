@@ -1,6 +1,8 @@
 package by.epam.buber.controller.util.impl.post;
 
 import by.epam.buber.controller.util.Command;
+import by.epam.buber.controller.util.Redirect;
+import by.epam.buber.controller.util.RequestAttribute;
 import by.epam.buber.exception.ControllerException;
 import by.epam.buber.exception.ServiceException;
 import by.epam.buber.service.OrderService;
@@ -13,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static by.epam.buber.controller.util.PostFormRedirection.DRIVER_CURRENT_ORDER_REDIRECT;
+import static by.epam.buber.controller.util.Redirect.DRIVER_CURRENT_ORDER_REDIRECT;
 
 public class PostStartTrip implements Command {
     private static final Logger logger = LogManager.getLogger(PostStartTrip.class);
@@ -24,9 +26,9 @@ public class PostStartTrip implements Command {
         try{
         ServiceFactory serviceFactory = ServiceFactory.getInstance();
         OrderService orderService = serviceFactory.getOrderService();
-        orderService.startTrip(Integer.valueOf(request.getParameter("startedOrder")));
-        response.sendRedirect(DRIVER_CURRENT_ORDER_REDIRECT);
-        //request.getRequestDispatcher(DRIVER_CURRENT_ORDER).forward(request, response);
+
+        orderService.startTrip(Integer.valueOf(request.getParameter(RequestAttribute.STARTED_ORDER)));
+        response.sendRedirect(Redirect.DRIVER_CURRENT_ORDER_REDIRECT);
         logger.info("trip started");
         }catch (ServiceException e){
             logger.error("error during start trip", e);

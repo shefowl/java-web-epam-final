@@ -1,6 +1,8 @@
 package by.epam.buber.controller.util.impl.post;
 
 import by.epam.buber.controller.util.Command;
+import by.epam.buber.controller.util.Page;
+import by.epam.buber.controller.util.RequestAttribute;
 import by.epam.buber.exception.ControllerException;
 import by.epam.buber.exception.ServiceException;
 import by.epam.buber.service.AdminService;
@@ -13,8 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static by.epam.buber.controller.util.Pages.ADMIN_PAGE;
-
 public class PostBan implements Command {
     private static final Logger logger = LogManager.getLogger(PostBan.class);
 
@@ -25,11 +25,11 @@ public class PostBan implements Command {
             ServiceFactory serviceFactory = ServiceFactory.getInstance();
             AdminService adminService = serviceFactory.getAdminService();
 
-            int id = Integer.valueOf(request.getParameter("participant"));
+            int id = Integer.valueOf(request.getParameter(RequestAttribute.PARTICIPANT));
             adminService.ban(id, !adminService.getParticipantById(id).isBanned());
-            request.getRequestDispatcher(ADMIN_PAGE).forward(request, response);
+            request.getRequestDispatcher(Page.ADMIN_PAGE).forward(request, response);
         }catch (ServiceException e){
-            logger.error(e);
+            logger.error("error during command PostBan", e);
             throw new ControllerException(e);
         }
     }

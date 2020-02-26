@@ -1,6 +1,9 @@
 package by.epam.buber.controller.util.impl.post;
 
 import by.epam.buber.controller.util.Command;
+import by.epam.buber.controller.util.Page;
+import by.epam.buber.controller.util.RequestAttribute;
+import by.epam.buber.controller.util.SessionAttribute;
 import by.epam.buber.entity.participant.TaxiParticipant;
 import by.epam.buber.exception.ControllerException;
 import by.epam.buber.exception.ServiceException;
@@ -15,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-import static by.epam.buber.controller.util.Pages.*;
+import static by.epam.buber.controller.util.Redirect.MAIN_REDIRECT;
 
 public class PostChangePassword implements Command {
     private static final Logger logger = LogManager.getLogger(PostChangePassword.class);
@@ -28,21 +31,18 @@ public class PostChangePassword implements Command {
         ServiceFactory serviceFactory = ServiceFactory.getInstance();
         UserService userService = serviceFactory.getUserService();
 
-        TaxiParticipant participant = userService.changePassword((Integer) session.getAttribute("userId"),
-                request.getParameter("current"), request.getParameter("new"),
-                request.getParameter("repeatNew"));
+        TaxiParticipant participant = userService.changePassword((Integer) session.getAttribute(SessionAttribute.USER_ID_ATTRIBUTE),
+                request.getParameter(RequestAttribute.CURRENT_PASSWORD), request.getParameter(RequestAttribute.NEW_PASSWORD),
+                request.getParameter(RequestAttribute.REPEAT_NEW_PASSWORD));
         if(participant != null){
-            response.sendRedirect(MAIN);
-//            request.setAttribute("error", false);
+            response.sendRedirect(MAIN_REDIRECT);
         }
         else {
-            request.setAttribute("error", true);
-//            String s = request.getRequestURI() + "action" request.getParameter("action");
-            request.getRequestDispatcher(USER_PASSWORD).forward(request, response);
+            request.setAttribute(RequestAttribute.ERROR, true);
+            request.getRequestDispatcher(Page.USER_PASSWORD).forward(request, response);
         }
-       // request.getRequestDispatcher(USER_PAGE).forward(request, response);
         }catch (ServiceException e){
-            logger.error(e);
+            logger.error("error during command PostChangePassword", e);
             throw new ControllerException(e);
         }
     }

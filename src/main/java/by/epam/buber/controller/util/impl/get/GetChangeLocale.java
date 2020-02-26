@@ -1,6 +1,8 @@
 package by.epam.buber.controller.util.impl.get;
 
 import by.epam.buber.controller.util.Command;
+import by.epam.buber.controller.util.Redirect;
+import by.epam.buber.controller.util.SessionAttribute;
 import by.epam.buber.exception.ControllerException;
 import by.epam.buber.service.locale.LocaleResourceManager;
 
@@ -11,8 +13,6 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Locale;
 
-import static by.epam.buber.controller.util.PostFormRedirection.MAIN_REDIRECT;
-
 public class GetChangeLocale implements Command {
     @Override
     public void execute(HttpServletRequest request, HttpServletResponse response)
@@ -22,16 +22,14 @@ public class GetChangeLocale implements Command {
         LocaleResourceManager resourceManager = LocaleResourceManager.getInstance();
 
         HttpSession session = request.getSession();
-        Locale currentLocale = resourceManager.getCurrentLocale();
-        if(session.getAttribute("locale").equals(en)){
+        if(session.getAttribute(SessionAttribute.LOCALE_ATTRIBUTE).equals(en)){
             resourceManager.changeResource(ru);
-            session.setAttribute("locale", ru);
+            session.setAttribute(SessionAttribute.LOCALE_ATTRIBUTE, ru);
         }
         else {
             resourceManager.changeResource(en);
-            session.setAttribute("locale", en);
+            session.setAttribute(SessionAttribute.LOCALE_ATTRIBUTE, en);
         }
-        response.sendRedirect(MAIN_REDIRECT);
-        //request.getRequestDispatcher(MAIN);
+        response.sendRedirect(Redirect.MAIN_REDIRECT);
     }
 }

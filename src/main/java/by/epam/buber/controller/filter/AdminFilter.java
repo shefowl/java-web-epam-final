@@ -17,18 +17,14 @@ public class AdminFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
+            throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         HttpSession session = request.getSession(false);
         String userURI = request.getContextPath() + "/hello?action=main";
-        String css = "/css";
-        String img = "/img";
-        String js = "/js";
-        boolean resourcesRequest = request.getRequestURI().contains(css) || request.getRequestURI().contains(img) ||
-                request.getRequestURI().contains(js);
 
-        if(session.getAttribute("userRole") == Role.ADMIN || resourcesRequest) {
+        if(session.getAttribute("userRole") == Role.ADMIN) {
             filterChain.doFilter(request, response);
         }
         else{

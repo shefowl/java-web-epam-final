@@ -1,6 +1,9 @@
 package by.epam.buber.controller.util.impl.post;
 
 import by.epam.buber.controller.util.Command;
+import by.epam.buber.controller.util.Redirect;
+import by.epam.buber.controller.util.RequestAttribute;
+import by.epam.buber.controller.util.SessionAttribute;
 import by.epam.buber.entity.Order;
 import by.epam.buber.exception.ControllerException;
 import by.epam.buber.exception.ServiceException;
@@ -26,11 +29,11 @@ public class PostNewOrder implements Command {
         OrderService orderService = serviceFactory.getOrderService();
         HttpSession session = request.getSession();
 
-        Order order = orderService.makeOrder((Integer) session.getAttribute("userId"),
-                request.getParameter("address"),
-                request.getParameter("class"),
-                request.getParameter("comment"));
-        response.sendRedirect("app?action=drivers");
+        Order order = orderService.makeOrder((Integer) session.getAttribute(SessionAttribute.USER_ID_ATTRIBUTE),
+                request.getParameter(RequestAttribute.ADDRESS),
+                request.getParameter(RequestAttribute.CLASS),
+                request.getParameter(RequestAttribute.COMMENT));
+        response.sendRedirect(Redirect.USER_DRIVERS_REDIRECT);
         }catch (ServiceException e){
             logger.error("error during creating a new order", e);
             throw new ControllerException(e);

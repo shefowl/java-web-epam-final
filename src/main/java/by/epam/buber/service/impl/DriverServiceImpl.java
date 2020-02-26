@@ -65,14 +65,5 @@ public class DriverServiceImpl implements DriverService {
         }
     }
 
-    @Override
-    public void setDriverUnactive(int driverId) throws ServiceException {
-        try {
-            driverCrudRepository.setDriverActive(driverId, false);
-        }catch (DaoException e){
-            logger.error(e);
-            throw new ServiceException(e);
-        }
-    }
 
 }

@@ -1,6 +1,8 @@
 package by.epam.buber.controller.util.impl.post;
 
 import by.epam.buber.controller.util.Command;
+import by.epam.buber.controller.util.Page;
+import by.epam.buber.controller.util.RequestAttribute;
 import by.epam.buber.entity.Car;
 import by.epam.buber.entity.CarClass;
 import by.epam.buber.entity.participant.Driver;
@@ -17,8 +19,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.math.BigDecimal;
 
-import static by.epam.buber.controller.util.Pages.ADMIN_PAGE;
-
 public class PostNewDriver implements Command {
     private static final Logger logger = LogManager.getLogger(PostNewDriver.class);
 
@@ -30,22 +30,22 @@ public class PostNewDriver implements Command {
         AdminService adminService = serviceFactory.getAdminService();
 
         Driver driver = new Driver();
-        driver.setName(request.getParameter("name"));
-        driver.setPassword(request.getParameter("password"));
-        driver.setEmail(request.getParameter("email"));
-        driver.setPhoneNumber(request.getParameter("phone"));
-        double d = Double.valueOf(request.getParameter("pricePerKm"));
-        driver.setPricePerKm(BigDecimal.valueOf(d));
-        Car car = new Car();
+        driver.setName(request.getParameter(RequestAttribute.NAME));
+        driver.setPassword(request.getParameter(RequestAttribute.PASSWORD));
+        driver.setEmail(request.getParameter(RequestAttribute.EMAIL));
+        driver.setPhoneNumber(request.getParameter(RequestAttribute.PHONE));
+        double price = Double.valueOf(request.getParameter(RequestAttribute.PRICE_PER_KM));
+        driver.setPricePerKm(BigDecimal.valueOf(price));
 
-        car.setCarClass(CarClass.valueOf(request.getParameter("carClass").toUpperCase()));
-        car.setMark(request.getParameter("mark"));
-        car.setModel(request.getParameter("model"));
+        Car car = new Car();
+        car.setCarClass(CarClass.valueOf(request.getParameter(RequestAttribute.CAR_CLASS).toUpperCase()));
+        car.setMark(request.getParameter(RequestAttribute.MARK));
+        car.setModel(request.getParameter(RequestAttribute.MODEL));
         driver.setCar(car);
-        adminService.registrateDriver(driver);
-        request.getRequestDispatcher(ADMIN_PAGE).forward(request, response);
+        adminService.signUpDriver(driver);
+        request.getRequestDispatcher(Page.ADMIN_PAGE).forward(request, response);
         }catch (ServiceException e){
-            logger.error(e);
+            logger.error("error during command PostNewDriver", e);
             throw new ControllerException(e);
         }
     }

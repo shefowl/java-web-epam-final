@@ -14,43 +14,42 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-//@WebServlet("/hello")
-//@Web
-//public class Controller extends HttpServlet {
-//    private static final Logger logger = LogManager.getLogger(Controller.class);
-//
-//    private CommandProvider commandProvider = new CommandProvider();
-//    private final String GET = "GET_";
-//    private final String POST = "POST_";
-//
-//    @Override
-//    public void init(ServletConfig config) throws ServletException {
-//        super.init();
-//    }
-//    @Override
-//    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-//            throws ServletException, IOException {
-//        try {
-//            HttpSession session = request.getSession(true);
-//            String action = request.getParameter("action");
-//            commandProvider.getCommand(GET + action).execute(request, response);
-//        }catch (ControllerException e){
-//            logger.error(e);
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    @Override
-//    protected void doPost (HttpServletRequest request, HttpServletResponse response)
-//            throws ServletException, IOException {
-//        try {
-//            request.setCharacterEncoding("UTF-8");
-//            String action = request.getParameter("action");
-//            commandProvider.getCommand(POST + action).execute(request, response);
-//        }catch (ControllerException e){
-//            logger.error(e);
-//            e.printStackTrace();
-//        }
-//    }
-//
-//}
+@WebServlet(urlPatterns = {"/hello", "/app", "/driver", "/admin"})
+public class Controller extends HttpServlet {
+    private static final Logger logger = LogManager.getLogger(Controller.class);
+
+    private CommandProvider commandProvider = new CommandProvider();
+    private final String GET = "GET_";
+    private final String POST = "POST_";
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init();
+    }
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            HttpSession session = request.getSession(true);
+            String action = request.getParameter("action");
+            commandProvider.getCommand(GET + action).execute(request, response);
+        }catch (ControllerException e){
+            logger.error(e);
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void doPost (HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            request.setCharacterEncoding("UTF-8");
+            String action = request.getParameter("action");
+            commandProvider.getCommand(POST + action).execute(request, response);
+        }catch (ControllerException e){
+            logger.error(e);
+            e.printStackTrace();
+        }
+    }
+
+}

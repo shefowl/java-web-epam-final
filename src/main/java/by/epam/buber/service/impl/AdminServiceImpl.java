@@ -3,6 +3,7 @@ package by.epam.buber.service.impl;
 import by.epam.buber.entity.Order;
 import by.epam.buber.entity.participant.Driver;
 import by.epam.buber.entity.participant.TaxiParticipant;
+import by.epam.buber.entity.participant.User;
 import by.epam.buber.exception.DaoException;
 import by.epam.buber.exception.ServiceException;
 import by.epam.buber.repository.DriverCrudRepository;
@@ -29,6 +30,8 @@ public class AdminServiceImpl implements AdminService {
     private OrderCrudRepository orderCrudRepository = repositoryFactory.getOrderCrudRepository();
     private DriverCrudRepository driverCrudRepository = repositoryFactory.getDriverCrudRepository();
     private PasswordEncoder passwordEncoder = new PasswordEncoder();
+
+    public static final double SUM_FOR_DISCOUNT = 1000;
 
 
     @Override
@@ -76,16 +79,16 @@ public class AdminServiceImpl implements AdminService {
         List<TaxiParticipant> participantsForDiscount = new ArrayList<>();
 
         try {
-            List<TaxiParticipant> participants = getAllParticipants();
+            List<User> users = userCrudRepository.getAllUsers();
             List<Order> orders;
-            for (TaxiParticipant participant : participants) {
-                orders = orderCrudRepository.getCompletedByUserId(participant.getId());
+            for (User user : users) {
+                orders = orderCrudRepository.getCompletedByUserId(user.getId());
                 BigDecimal price = new BigDecimal(0);
                 for (Order order : orders) {
                     price = price.add(order.getPrice());
                 }
-                if (price.doubleValue() > 1000) {
-                    participantsForDiscount.add(participant);
+                if (price.doubleValue() > SUM_FOR_DISCOUNT && user.getDiscount() == 0) {
+                    participantsForDiscount.add(user);
                 }
             }
         }
@@ -100,7 +103,7 @@ public class AdminServiceImpl implements AdminService {
     public void setDiscount(int userId, int discount) throws ServiceException {
         try {
             userCrudRepository.setDiscount(userId, discount);
-            logger.info("User get discount");
+            logger.info("User got discount");
         }catch (DaoException e){
             logger.error(e);
             throw new ServiceException(e);
@@ -118,7 +121,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void registrateDriver(Driver driver) throws ServiceException {
+    public void signUpDriver(Driver driver) throws ServiceException {
         try {
             driver.setPassword(passwordEncoder.encode(driver.getPassword()));
             driver.setCoordinates(CoordinatesGenerator.generate());

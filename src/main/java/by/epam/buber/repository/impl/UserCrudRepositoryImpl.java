@@ -18,17 +18,20 @@ public class UserCrudRepositoryImpl extends AbstractRepository implements UserCr
 
     private final static Logger logger = LogManager.getLogger(UserCrudRepositoryImpl.class);
 
+    private Connection connection;
+
     private ResultSetConverter converter = ResultSetConverter.getInstance();
 
-    public static final String SQL_USER_REQUEST = "SELECT  * FROM participant";
-    public static final String SQL_USER_REQUEST_BY_ID = "SELECT  * FROM participant WHERE id=?";
-    public static final String SQL_USER_REQUEST_BY_NAME = "SELECT  * FROM participant WHERE name=?";
-    public static final String SQL_USER_INSERT = "INSERT INTO participant(name, password, role, email, phone, banned) " +
-            "VALUES(?, ?, 'USER', ?,?,?); SELECT LAST_INSERT_ID() INTO @mysql_variable_here; " +
+    public static final String SQL_PARTICIPANT_REQUEST = "SELECT  * FROM participant";
+    public static final String SQL_USER_REQUEST = "SELECT * FROM participant p JOIN user u ON p.id=u.participantId";
+    public static final String SQL_PARTICIPANT_REQUEST_BY_ID = "SELECT  * FROM participant WHERE id=?";
+    public static final String SQL_PARTICIPANT_REQUEST_BY_NAME = "SELECT  * FROM participant WHERE name=?";
+    public static final String SQL_USER_INSERT = "INSERT INTO participant(name, password, email, role, phone, banned) " +
+            "VALUES(?,?,?,?,?,?); SELECT LAST_INSERT_ID() INTO @mysql_variable_here; " +
             "INSERT INTO user(participantId, discount) VALUES(@mysql_variable_here, 0);";
-    public static final String SQL_USER_UPDATE_BY_ID = "UPDATE participant SET name=?, password=?, email=?, role=?," +
+    public static final String SQL_PARTICIPANT_UPDATE_BY_ID = "UPDATE participant SET name=?, password=?, email=?, role=?," +
             " phone=? WHERE id=?";
-    public static final String SQL_USER_UPDATE_BANNED_BY_ID = "UPDATE participant SET banned=? WHERE id=?";
+    public static final String SQL_PARTICIPANT_UPDATE_BANNED_BY_ID = "UPDATE participant SET banned=? WHERE id=?";
     public static final String SQL_USER_DELETE_BY_ID = "SET FOREIGN_KEY_CHECKS=0; DELETE p, u FROM participant p JOIN user u " +
             "ON p.id=u.participantId WHERE p.id=? SET FOREIGN_KEY_CHECKS=1;";
     public static final String SQL_USER_JOIN_BY_ID = "SELECT * FROM participant p" +
@@ -43,7 +46,7 @@ public class UserCrudRepositoryImpl extends AbstractRepository implements UserCr
         List<TaxiParticipant> participants = new ArrayList<>();
         try (Connection connection = ConnectionPool.getInstance().getConnection();
              Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(SQL_USER_REQUEST)) {
+             ResultSet resultSet = statement.executeQuery(SQL_PARTICIPANT_REQUEST)) {
             while(resultSet.next()) {
                 participants.add(createParticipantByRole(resultSet));
             }
@@ -54,11 +57,25 @@ public class UserCrudRepositoryImpl extends AbstractRepository implements UserCr
         return participants;
     }
 
+    public List<User> getAllUsers() throws DaoException {
+        List<User> users = new ArrayList<>();
+        try (Connection connection = ConnectionPool.getInstance().getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(SQL_USER_REQUEST)) {
+            while(resultSet.next()) {
+                users.add(converter.convertUserFromResultSet(resultSet, new User()));
+            }
+        } catch (ConnectionPoolException | SQLException e) {
+            logger.error(e);
+            throw new DaoException(e);
+        }
+        return users;
+    }
+
     @Override
     public TaxiParticipant getById(Integer id) throws DaoException {
-        TaxiParticipant participant;
         try (Connection connection = ConnectionPool.getInstance().getConnection();
-             PreparedStatement statement  = connection.prepareStatement(SQL_USER_REQUEST_BY_ID)) {
+             PreparedStatement statement  = connection.prepareStatement(SQL_PARTICIPANT_REQUEST_BY_ID)) {
             statement.setInt(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if(resultSet.next()) {
@@ -75,7 +92,7 @@ public class UserCrudRepositoryImpl extends AbstractRepository implements UserCr
     @Override
     public TaxiParticipant getByName(String name) throws DaoException {
         try (Connection connection = ConnectionPool.getInstance().getConnection();
-             PreparedStatement statement  = connection.prepareStatement(SQL_USER_REQUEST_BY_NAME)) {
+             PreparedStatement statement  = connection.prepareStatement(SQL_PARTICIPANT_REQUEST_BY_NAME)) {
             statement.setString(1, name);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if(resultSet.next()) {
@@ -137,7 +154,7 @@ public class UserCrudRepositoryImpl extends AbstractRepository implements UserCr
 
     @Override
     public void ban(Integer participantId, boolean ban) throws DaoException {
-        setBooleanById(ban, participantId, SQL_USER_UPDATE_BANNED_BY_ID);
+        setBooleanById(ban, participantId, SQL_PARTICIPANT_UPDATE_BANNED_BY_ID);
     }
 
     @Override
@@ -157,7 +174,7 @@ public class UserCrudRepositoryImpl extends AbstractRepository implements UserCr
     public void save(Integer id, TaxiParticipant user) throws DaoException{
         try (Connection connection = ConnectionPool.getInstance().getConnection()){
             connection.setAutoCommit(false);
-            try (PreparedStatement statement = connection.prepareStatement(SQL_USER_UPDATE_BY_ID)){
+            try (PreparedStatement statement = connection.prepareStatement(SQL_PARTICIPANT_UPDATE_BY_ID)){
                 converter.statementSetParticipant(statement, user);
                 statement.setInt(6, id);
                 statement.executeUpdate();

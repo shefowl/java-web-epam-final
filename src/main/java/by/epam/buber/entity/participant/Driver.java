@@ -20,16 +20,6 @@ public class Driver extends TaxiParticipant {
         role = Role.DRIVER;
     }
 
-    public Driver(Driver driver) {
-        super(driver);
-        this.car = new Car(driver.car);
-        this.coordinates = driver.coordinates;
-        this.active = driver.active;
-        this.busy = driver.busy;
-        this.pricePerKm = new BigDecimal(driver.pricePerKm.doubleValue());
-        this.orders = new ArrayList<>(orders);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

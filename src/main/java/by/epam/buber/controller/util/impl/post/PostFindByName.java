@@ -1,6 +1,8 @@
 package by.epam.buber.controller.util.impl.post;
 
 import by.epam.buber.controller.util.Command;
+import by.epam.buber.controller.util.Page;
+import by.epam.buber.controller.util.RequestAttribute;
 import by.epam.buber.entity.participant.TaxiParticipant;
 import by.epam.buber.exception.ControllerException;
 import by.epam.buber.exception.ServiceException;
@@ -15,8 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-import static by.epam.buber.controller.util.Pages.ADMIN_FOUND_BY_NAME;
-import static by.epam.buber.controller.util.Pages.ADMIN_SEARCH_RESULTS;
+import static by.epam.buber.controller.util.Page.ADMIN_SEARCH_RESULTS;
 
 public class PostFindByName implements Command {
     private static final Logger logger = LogManager.getLogger(PostFindByName.class);
@@ -28,29 +29,29 @@ public class PostFindByName implements Command {
         ServiceFactory serviceFactory = ServiceFactory.getInstance();
         AdminService adminService = serviceFactory.getAdminService();
         final int NOTES_PER_PAGE = 5;
-        List<TaxiParticipant> participants = adminService.getUsersByName(request.getParameter("name"));
+        List<TaxiParticipant> participants = adminService.getUsersByName(request.getParameter(RequestAttribute.NAME));
 
-        boolean found = !participants.isEmpty();
-        request.setAttribute("found", found);
-        if(found) {
-            if(request.getParameter("begin") != null){
-                Integer begin = Integer.valueOf(request.getParameter("begin"));
-                request.setAttribute("begin", begin);
+            boolean found = !participants.isEmpty();
+            request.setAttribute(RequestAttribute.FOUND, found);
+            if(found) {
+                if(request.getParameter(RequestAttribute.BEGIN) != null){
+                    Integer begin = Integer.valueOf(request.getParameter(RequestAttribute.BEGIN));
+                    request.setAttribute(RequestAttribute.BEGIN, begin);
+                }
+                else {
+                    request.setAttribute(RequestAttribute.BEGIN, 0);
+                }
+                int size = participants.size();
+                request.setAttribute(RequestAttribute.PARTICIPANTS, participants);
+                request.setAttribute(RequestAttribute.NUMBER_OF_NOTES, size);
+                request.setAttribute(RequestAttribute.NOTES_PER_PAGE, NOTES_PER_PAGE);
+                request.getRequestDispatcher(Page.ADMIN_SEARCH_RESULTS).forward(request, response);
             }
-            else {
-                request.setAttribute("begin", 0);
-            }
-            int size = participants.size();
-            request.setAttribute("participants", participants);
-            request.setAttribute("numberOfNotes", size);
-            request.setAttribute("notesPerPage", NOTES_PER_PAGE);
-            request.getRequestDispatcher(ADMIN_SEARCH_RESULTS).forward(request, response);
-        }
         else {
-            request.getRequestDispatcher(ADMIN_SEARCH_RESULTS).forward(request, response);
+            request.getRequestDispatcher(Page.ADMIN_SEARCH_RESULTS).forward(request, response);
         }
         }catch (ServiceException e){
-            logger.error(e);
+            logger.error("error during command PostFindByName", e);
             throw new ControllerException(e);
         }
     }

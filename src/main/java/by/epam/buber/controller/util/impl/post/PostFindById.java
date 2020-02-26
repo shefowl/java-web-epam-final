@@ -1,6 +1,8 @@
 package by.epam.buber.controller.util.impl.post;
 
 import by.epam.buber.controller.util.Command;
+import by.epam.buber.controller.util.Page;
+import by.epam.buber.controller.util.RequestAttribute;
 import by.epam.buber.entity.participant.TaxiParticipant;
 import by.epam.buber.exception.ControllerException;
 import by.epam.buber.exception.ServiceException;
@@ -16,9 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static by.epam.buber.controller.util.Pages.ADMIN_FOUND_BY_ID;
-import static by.epam.buber.controller.util.Pages.ADMIN_SEARCH_RESULTS;
-import static by.epam.buber.controller.util.PostFormRedirection.FOUND_BY_ID_REDIRECT;
+import static by.epam.buber.controller.util.Page.ADMIN_SEARCH_RESULTS;
 
 public class PostFindById implements Command {
     private static final Logger logger = LogManager.getLogger(PostFindById.class);
@@ -32,30 +32,29 @@ public class PostFindById implements Command {
         final int NOTES_PER_PAGE = 5;
 
         List<TaxiParticipant> participants = new ArrayList<>();
-        participants.add(adminService.getParticipantById(Integer.valueOf(request.getParameter("id"))));
+        participants.add(adminService.getParticipantById(Integer.valueOf(request.getParameter(RequestAttribute.ID))));
+
         boolean found = !participants.isEmpty();
-        request.setAttribute("found", found);
+        request.setAttribute(RequestAttribute.FOUND, found);
         if(found) {
-            if(request.getParameter("begin") != null){
-                Integer begin = Integer.valueOf(request.getParameter("begin"));
-                request.setAttribute("begin", begin);
+            if(request.getParameter(RequestAttribute.BEGIN) != null){
+                Integer begin = Integer.valueOf(request.getParameter(RequestAttribute.BEGIN));
+                request.setAttribute(RequestAttribute.BEGIN, begin);
             }
             else {
-                request.setAttribute("begin", 0);
+                request.setAttribute(RequestAttribute.BEGIN, 0);
             }
             int size = participants.size();
-            request.setAttribute("participants", participants);
-            request.setAttribute("numberOfNotes", size);
-            request.setAttribute("notesPerPage", NOTES_PER_PAGE);
-            //response.sendRedirect(FOUND_BY_ID_REDIRECT);
-            request.getRequestDispatcher(ADMIN_SEARCH_RESULTS).forward(request, response);
+            request.setAttribute(RequestAttribute.PARTICIPANTS, participants);
+            request.setAttribute(RequestAttribute.NUMBER_OF_NOTES, size);
+            request.setAttribute(RequestAttribute.NOTES_PER_PAGE, NOTES_PER_PAGE);
+            request.getRequestDispatcher(Page.ADMIN_SEARCH_RESULTS).forward(request, response);
         }
         else {
-            //response.sendRedirect(FOUND_BY_ID_REDIRECT);
-            request.getRequestDispatcher(ADMIN_SEARCH_RESULTS).forward(request, response);
+            request.getRequestDispatcher(Page.ADMIN_SEARCH_RESULTS).forward(request, response);
         }
         }catch (ServiceException e){
-            logger.error(e);
+            logger.error("error during command PostFindById", e);
             throw new ControllerException(e);
         }
     }
