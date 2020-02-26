@@ -176,11 +176,11 @@
                                             "<fmt:message key="text.signUp.email.placeholder" bundle="${locale}"/>" required/>
 
                                 </p>
-                                <p class="field__phone">
+                                <p class="field__phone" data-title="<fmt:message key="text.signUp.phone.title" bundle="${locale}"/>">
                                     <input type="tel" name="phone" id="phone" class="form-control" placeholder=
                                             "<fmt:message key="text.signUp.phone.placeholder" bundle="${locale}"/>" required/>
                                 </p>
-                                <input type="button" class="submit" name="button" id="ss" value=
+                                <input type="submit" class="submit" name="button" id="ss" value=
                                         "<fmt:message key="text.signUp.button" bundle="${locale}"/>">
                                 <%--<div class="submit">--%>
                                     <%--<button class="submit" type="submit">--%>
